@@ -271,7 +271,7 @@
         const response=await fetch(`${stravaWorkerUrl}/api/activities`,{headers:{'x-ride-week-key':stravaSyncKey}});
         const data=await response.json();
         if(!response.ok)throw new Error(data.error||'동기화에 실패했습니다.');
-        const synced=data.rides||[];const syncedIds=new Set(synced.map(r=>r.id));records=[...records.filter(r=>!syncedIds.has(r.id)),...synced];save();
+        const synced=data.rides||[];const syncedIds=new Set(synced.map(r=>r.id));records=[...records.filter(r=>!syncedIds.has(r.id)&&!String(r.id).startsWith('seed-')),...synced];save();
         setStravaStatus(`${synced.length}개의 Strava 라이딩을 가져왔어요.`);
         document.querySelector('#detail-title').textContent='동기화 완료';document.querySelector('#detail-text').textContent=`Strava 라이딩 ${synced.length}개를 기록에 반영했어요.`;document.querySelector('#edit-detail').hidden=true;detail.showModal();
       }catch(error){setStravaStatus(error.message||'동기화에 실패했습니다.');}
