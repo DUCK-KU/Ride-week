@@ -267,7 +267,7 @@
     function save(){localStorage.setItem(storageKey,JSON.stringify(records));renderAll();}
     function setStravaStatus(message){document.querySelector('#strava-status').textContent=message;}
     function lockStravaKey(){const input=document.querySelector('#strava-key');input.value='동기화 키가 저장되어 있어요';input.disabled=true;document.querySelector('#save-strava-key').hidden=true;document.querySelector('#toggle-strava-key').hidden=false;}
-    function unlockStravaKey(){const input=document.querySelector('#strava-key');input.value='';input.disabled=false;input.focus();document.querySelector('#save-strava-key').hidden=false;document.querySelector('#toggle-strava-key').hidden=true;setStravaStatus('새 동기화 키를 입력하고 저장해 주세요.');}
+    function unlockStravaKey(){const input=document.querySelector('#strava-key');input.value=stravaSyncKey;input.disabled=false;input.focus();document.querySelector('#save-strava-key').hidden=false;document.querySelector('#toggle-strava-key').hidden=true;setStravaStatus('동기화 키가 유지된 상태예요. 필요할 때만 수정하고 저장해 주세요.');}
     async function syncStrava(){
       if(!stravaSyncKey){setStravaStatus('개인 동기화 키를 먼저 입력하고 저장해 주세요.');return;}
       const button=document.querySelector('#sync-strava');button.disabled=true;button.textContent='동기화 중…';setStravaStatus('Strava에서 라이딩 기록을 가져오는 중이에요.');
