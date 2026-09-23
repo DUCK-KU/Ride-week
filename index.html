@@ -60,9 +60,6 @@
     .bottom { position:fixed; right:0; bottom:0; left:0; display:flex; justify-content:center; padding:8px 20px calc(8px + env(safe-area-inset-bottom)); background:rgba(255,255,255,.92); border-top:1px solid var(--line); backdrop-filter:blur(12px); }
     .nav { width:min(540px,100%); display:grid; grid-template-columns:repeat(3,1fr); }
     [hidden] { display:none !important; }
-    .settings-tabs { display:flex; gap:6px; margin-top:24px; padding:5px; background:#e8eee9; border-radius:14px; }
-    .settings-tabs button { flex:1; padding:11px 4px; border:0; border-radius:10px; background:transparent; color:var(--muted); font-size:13px; font-weight:700; }
-    .settings-tabs button[aria-selected="true"] { background:white; color:var(--deep); box-shadow:0 2px 5px #14221c0a; }
     .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; background:transparent; color:var(--muted); font-size:11px; }
     .nav button.active { color:var(--green); font-weight:800; }
     .nav b { font-size:20px; font-weight:500; }
@@ -174,19 +171,14 @@
   </main>
   <main class="app page" id="settings-page" hidden>
     <header class="page-header"><div><h1>설정</h1><p class="date">기록을 안전하게 관리하세요</p></div></header>
-    <div class="settings-tabs" role="tablist" aria-label="설정 분류">
-      <button id="tab-strava" role="tab" aria-selected="true" aria-controls="settings-strava" data-settings-tab="strava">Strava 연결</button>
-      <button id="tab-goals" role="tab" aria-selected="false" aria-controls="settings-goals" data-settings-tab="goals" tabindex="-1">목표 설정</button>
-      <button id="tab-backup" role="tab" aria-selected="false" aria-controls="settings-backup" data-settings-tab="backup" tabindex="-1">기록 백업</button>
-    </div>
-    <section class="strava-card" id="settings-strava" role="tabpanel" aria-labelledby="tab-strava">
+    <section class="strava-card" id="settings-strava" aria-label="Strava 연결">
       <h2>Strava 연결</h2>
       <p>개인 동기화 키는 이 기기에만 저장됩니다.</p>
       <div class="strava-key"><input id="strava-key" type="password" autocomplete="new-password" placeholder="개인 동기화 키 입력"><button id="save-strava-key" type="button">저장</button><button class="key-lock" id="toggle-strava-key" type="button" aria-label="동기화 키 잠금 해제" hidden>🔒</button></div>
       <div class="strava-buttons"><button class="secondary" id="connect-strava" type="button">Strava 연결</button><button id="sync-strava" type="button">기록 동기화</button></div>
       <p class="strava-status" id="strava-status">동기화 키를 먼저 저장해 주세요.</p>
     </section>
-    <section id="settings-goals" role="tabpanel" aria-labelledby="tab-goals" hidden>
+    <section id="settings-goals">
     <header class="page-header">
       <div><h2>목표 설정</h2><p class="date">꾸준한 라이딩을 위한 나의 기준</p></div>
       <button class="add-button" type="button" id="open-goals">수정</button>
@@ -197,7 +189,7 @@
       <div class="goal-setting"><div class="goal-icon">◷</div><div><strong>월간 거리</strong><span>이번 달 목표</span></div><b id="monthly-distance-goal">400 km</b></div>
     </section>
   </section>
-    <section class="settings-actions" id="settings-backup" role="tabpanel" aria-labelledby="tab-backup" hidden>
+    <section class="settings-actions" id="settings-backup" aria-label="기록 백업">
       <button class="settings-action" type="button" id="export-data"><div class="action-icon">↓</div><div><strong>기록 백업 내보내기</strong><span>라이딩 기록과 목표를 파일로 저장</span></div></button>
       <button class="settings-action" type="button" id="import-data"><div class="action-icon">↑</div><div><strong>기록 백업 가져오기</strong><span>저장한 백업 파일로 기록 복원</span></div></button>
       <input id="import-file" type="file" accept="application/json" hidden>
@@ -312,8 +304,6 @@
     }
     function showPage(page){document.querySelector('#home-page').hidden=page!=='home';document.querySelector('#rides-page').hidden=page!=='rides';document.querySelector('#settings-page').hidden=page!=='settings';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));}
     document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{activePeriod=b.dataset.period;renderHome();}));
-    function showSettingsTab(name){document.querySelectorAll('[data-settings-tab]').forEach(button=>{const selected=button.dataset.settingsTab===name;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;document.querySelector('#settings-'+button.dataset.settingsTab).hidden=!selected;});}
-    document.querySelectorAll('[data-settings-tab]').forEach((button,index,buttons)=>{button.addEventListener('click',()=>showSettingsTab(button.dataset.settingsTab));button.addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;buttons[next].click();buttons[next].focus();});});
     document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
     document.querySelector('#weekly-chart').addEventListener('click',event=>{const rect=event.currentTarget.getBoundingClientRect();const chartX=(event.clientX-rect.left)/rect.width*340;const index=Math.max(0,Math.min(11,Math.round((chartX-24)/(292/11))));showChartValues(index);});
     document.querySelector('#stream-tabs').addEventListener('click',event=>{const button=event.target.closest('[data-stream]');if(button)renderStream(button.dataset.stream);});
