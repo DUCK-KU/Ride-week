@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173c31">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ride Week">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Ride Week</title>
+  <style>
+    :root { color-scheme: light; --ink:#14221c; --muted:#718078; --paper:#f5f7f4; --green:#169a6c; --deep:#173c31; --line:#e5eae6; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+    button { font:inherit; }
+    .app { max-width:580px; min-height:100vh; margin:auto; padding:calc(18px + env(safe-area-inset-top)) 20px calc(92px + env(safe-area-inset-bottom)); }
+    .top { display:flex; align-items:center; justify-content:space-between; }
+    h1 { margin:0; font-size:31px; letter-spacing:-1.2px; }
+    .date { margin:4px 0 0; color:var(--muted); font-size:14px; }
+    .avatar { width:46px; height:46px; display:grid; place-items:center; border:0; border-radius:50%; background:#dff3e9; color:var(--green); font-size:21px; }
+    .period { display:flex; gap:8px; margin:24px 0 14px; }
+    .period button { padding:8px 13px; border:1px solid var(--line); border-radius:999px; background:white; color:var(--muted); font-weight:700; font-size:13px; }
+    .period button.active { border-color:var(--deep); background:var(--deep); color:white; }
+    .goal { padding:21px; border-radius:25px; background:var(--deep); color:white; }
+    .goal-label { color:#c5ddd3; font-size:14px; font-weight:700; }
+    .goal-value { margin:9px 0 15px; font-size:28px; font-weight:800; letter-spacing:-.8px; }
+    .bar { height:10px; overflow:hidden; border-radius:999px; background:#3c6354; }
+    .bar span { display:block; width:59%; height:100%; border-radius:inherit; background:#6fe5b0; transition:width .25s ease; }
+    .goal-note { margin:14px 0 0; color:#e0efe8; font-size:14px; line-height:1.45; }
+    h2 { margin:28px 0 12px; font-size:19px; letter-spacing:-.5px; }
+    .chart { padding:18px 12px 12px; border-radius:20px; background:white; }
+    .chart-head { display:flex; align-items:baseline; justify-content:space-between; margin:0 4px 12px; }
+    .chart-head strong { font-size:16px; }
+    .chart-head span { color:var(--muted); font-size:12px; }
+    .legend { display:flex; flex-wrap:wrap; gap:7px 12px; margin:0 4px 12px; color:var(--muted); font-size:11px; }
+    .legend span { display:flex; align-items:center; gap:4px; }
+    .legend i { width:12px; height:3px; border-radius:999px; background:currentColor; }
+    .chart svg { width:100%; height:auto; display:block; overflow:visible; }
+    .axis-label { fill:#819087; font-size:8.5px; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+    .stat { min-width:0; padding:12px 4px; border-radius:15px; background:white; text-align:center; }
+    .stat .icon { display:grid; height:19px; place-items:center; color:var(--green); }
+    .stat .icon svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.9; }
+    .stat strong { display:block; margin-top:5px; overflow:hidden; font-size:15px; letter-spacing:-.5px; white-space:nowrap; }
+    .stat small { display:block; margin-top:2px; color:var(--muted); font-size:10px; white-space:nowrap; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; }
+    .section-title button { border:0; background:transparent; color:var(--green); font-weight:700; }
+    .rides { display:grid; gap:10px; }
+    .ride { width:100%; display:flex; align-items:center; gap:13px; padding:13px; border:0; border-radius:18px; background:white; color:var(--ink); text-align:left; }
+    .ride:active { transform:scale(.99); }
+    .ride-icon { width:42px; height:42px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
+    .ride-copy { min-width:0; flex:1; }
+    .ride-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:15px; font-weight:750; }
+    .ride-meta { margin-top:3px; color:var(--muted); font-size:12px; }
+    .chevron { color:#aab3ad; font-size:21px; }
+    .bottom { position:fixed; right:0; bottom:0; left:0; display:flex; justify-content:center; padding:8px 20px calc(8px + env(safe-area-inset-bottom)); background:rgba(255,255,255,.92); border-top:1px solid var(--line); backdrop-filter:blur(12px); }
+    .nav { width:min(540px,100%); display:grid; grid-template-columns:repeat(4,1fr); }
+    .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; background:transparent; color:var(--muted); font-size:11px; }
+    .nav button.active { color:var(--green); font-weight:800; }
+    .nav b { font-size:20px; font-weight:500; }
+    dialog { width:min(360px,calc(100% - 40px)); border:0; border-radius:22px; padding:22px; box-shadow:0 18px 50px #0004; }
+    dialog::backdrop { background:#14221c88; }
+    dialog h3 { margin:0 0 8px; }
+    dialog p { color:var(--muted); line-height:1.55; }
+    dialog button { width:100%; padding:12px; border:0; border-radius:13px; background:var(--deep); color:white; font-weight:750; }
+    .page[hidden] { display:none; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; }
+    .page-header h1 { font-size:27px; }
+    .add-button { padding:10px 13px; border:0; border-radius:12px; background:var(--deep); color:white; font-weight:750; }
+    .record-list { display:grid; gap:10px; margin-top:22px; }
+    .record-list .ride { position:relative; }
+    .delete { width:28px; height:28px; flex:none; border:0; border-radius:50%; background:#f2f5f2; color:#849088; font-size:17px; }
+    .record-dialog { max-height:90vh; overflow:auto; }
+    .record-dialog form { display:grid; gap:12px; }
+    .record-dialog label { display:grid; gap:6px; color:#48564e; font-size:13px; font-weight:700; }
+    .record-dialog input, .record-dialog textarea { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
+    .record-dialog textarea { min-height:72px; resize:vertical; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .picker-label { margin-top:2px; color:#48564e; font-size:13px; font-weight:700; }
+    .icon-picker { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .icon-choice { display:grid; place-items:center; min-height:48px; border:1px solid var(--line); border-radius:12px; background:white; color:#63736a; }
+    .icon-choice.selected { border-color:var(--green); background:#e5f6ed; color:var(--green); }
+    .icon-choice svg, .ride-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.75; }
+    .icon-choice svg.symbol-bike, .ride-icon svg.symbol-bike, .icon-choice svg.symbol-group, .ride-icon svg.symbol-group { stroke-width:2.35; }
+    .dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+    .dialog-actions .secondary { background:#edf2ee; color:#536158; }
+    .empty { margin-top:28px; color:var(--muted); text-align:center; line-height:1.6; }
+    .goal-settings { display:grid; gap:11px; margin-top:24px; }
+    .goal-setting { display:flex; align-items:center; gap:13px; padding:16px; border-radius:18px; background:white; }
+    .goal-setting .goal-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:18px; }
+    .goal-setting strong { display:block; font-size:15px; }
+    .goal-setting span { display:block; margin-top:3px; color:var(--muted); font-size:13px; }
+    .goal-setting b { margin-left:auto; font-size:18px; }
+    .settings-actions { display:grid; gap:11px; margin-top:24px; }
+    .settings-action { width:100%; display:flex; align-items:center; gap:13px; padding:16px; border:0; border-radius:18px; background:white; color:var(--ink); text-align:left; }
+    .settings-action .action-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
+    .settings-action strong { display:block; font-size:15px; }
+    .settings-action span { display:block; margin-top:3px; color:var(--muted); font-size:12px; }
+  </style>
+</head>
+<body>
+  <main class="app page" id="home-page">
+    <header class="top">
+      <div><h1 id="heading">이번 주</h1><p class="date" id="date">9월 21일 — 9월 27일</p></div>
+      <button class="avatar" aria-label="프로필">♙</button>
+    </header>
+    <div class="period" aria-label="기간 선택">
+      <button class="active" data-period="week">이번 주</button><button data-period="month">이번 달</button>
+    </div>
+    <section class="goal" aria-label="거리 목표">
+      <div class="goal-label" id="goal-label">주간 거리 목표</div>
+      <div class="goal-value" id="goal-value">59.3 / 100 km</div>
+      <div class="bar"><span id="progress"></span></div>
+      <p class="goal-note" id="goal-note">지난주보다 12.4km 더 달렸어요. 잘하고 있어요!</p>
+    </section>
+    <h2>주간 추이</h2>
+    <section class="chart" aria-label="요일별 라이딩 거리 그래프">
+      <div class="chart-head"><strong>주간 훈련 추이</strong><span>1주 단위</span></div>
+      <div class="legend" aria-label="그래프 범례">
+        <span style="color:#58a8c9"><i></i>거리</span><span style="color:#edc64b"><i></i>상승고도</span><span style="color:#72ba5d"><i></i>운동시간</span><span style="color:#cf6b68"><i></i>훈련량</span>
+      </div>
+      <svg id="weekly-chart" viewBox="0 0 340 162" role="img" aria-label="요일별 거리, 상승고도, 운동시간, 훈련량 그래프"></svg>
+    </section>
+    <h2 id="stat-heading">이번 주 기록</h2>
+    <section class="stats" aria-label="라이딩 요약">
+      <div class="stat"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 21 9 3M18 21 15 3M12 5v3M12 11v3M12 17v2"/></svg></div><strong id="distance">59.3</strong><small>거리 (km)</small></div>
+      <div class="stat"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></div><strong id="duration">3:02</strong><small>시간</small></div>
+      <div class="stat"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 19 6-9 4 5 3-4 5 8H3Z"/></svg></div><strong id="elevation">482</strong><small>상승 (m)</small></div>
+      <div class="stat"><div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 22c-3.5 0-6-2.6-6-6.2C6 11.5 10 8.5 12.2 3c2.4 4.2 5.8 6.8 5.8 11.6 0 3.9-2.5 7.4-6 7.4Z"/><path d="M12 21c-1.5 0-2.5-1.1-2.5-2.7 0-1.5 1.5-3 2.5-4.7 1.1 1.5 2.5 2.7 2.5 4.7C14.5 19.9 13.5 21 12 21Z"/></svg></div><strong id="training-load">126</strong><small>훈련량</small></div>
+    </section>
+    <div class="section-title"><h2>최근 라이딩</h2><button type="button" id="all-rides">전체 보기</button></div>
+    <section class="rides" id="rides" aria-label="최근 라이딩 목록"></section>
+  </main>
+  <main class="app page" id="rides-page" hidden>
+    <header class="page-header">
+      <div><h1>라이딩</h1><p class="date">내가 기록한 모든 라이딩</p></div>
+      <button class="add-button" type="button" id="open-add">+ 기록 추가</button>
+    </header>
+    <section class="record-list" id="record-list" aria-label="라이딩 전체 목록"></section>
+  </main>
+  <main class="app page" id="goals-page" hidden>
+    <header class="page-header">
+      <div><h1>목표</h1><p class="date">꾸준한 라이딩을 위한 나의 기준</p></div>
+      <button class="add-button" type="button" id="open-goals">수정</button>
+    </header>
+    <section class="goal-settings" aria-label="현재 목표">
+      <div class="goal-setting"><div class="goal-icon">⌁</div><div><strong>주간 거리</strong><span>이번 주 목표</span></div><b id="weekly-distance-goal">100 km</b></div>
+      <div class="goal-setting"><div class="goal-icon">♨</div><div><strong>주간 훈련량</strong><span>이번 주 목표</span></div><b id="weekly-load-goal">200</b></div>
+      <div class="goal-setting"><div class="goal-icon">◷</div><div><strong>월간 거리</strong><span>이번 달 목표</span></div><b id="monthly-distance-goal">400 km</b></div>
+    </section>
+  </main>
+  <main class="app page" id="settings-page" hidden>
+    <header class="page-header"><div><h1>설정</h1><p class="date">기록을 안전하게 관리하세요</p></div></header>
+    <section class="settings-actions" aria-label="데이터 관리">
+      <button class="settings-action" type="button" id="export-data"><div class="action-icon">↓</div><div><strong>기록 백업 내보내기</strong><span>라이딩 기록과 목표를 파일로 저장</span></div></button>
+      <button class="settings-action" type="button" id="import-data"><div class="action-icon">↑</div><div><strong>기록 백업 가져오기</strong><span>저장한 백업 파일로 기록 복원</span></div></button>
+      <input id="import-file" type="file" accept="application/json" hidden>
+    </section>
+  </main>
+  <nav class="bottom" aria-label="주 메뉴"><div class="nav">
+    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b>♧</b>라이딩</button><button data-page="goals"><b>⚑</b>목표</button><button data-page="settings"><b>⚙</b>설정</button>
+  </div></nav>
+  <dialog id="detail"><h3 id="detail-title"></h3><p id="detail-text"></p><div class="dialog-actions"><button class="secondary" type="button" id="edit-detail">수정</button><button type="button" id="close-detail">닫기</button></div></dialog>
+  <dialog class="record-dialog" id="record-form">
+    <form id="ride-form">
+      <h3>라이딩 기록 추가</h3>
+      <label>라이딩 이름<input id="ride-title" name="title" placeholder="예: 한강 야간 라이딩" required></label>
+      <input id="ride-icon" name="icon" type="hidden" value="bike">
+      <div class="picker-label">아이콘 선택</div>
+      <div class="icon-picker" id="icon-picker" aria-label="라이딩 아이콘 선택"></div>
+      <label>날짜<input id="ride-date" name="date" type="date" required></label>
+      <div class="form-grid">
+        <label>거리 (km)<input name="distance" type="number" min="0" step="0.1" placeholder="25.4" required></label>
+        <label>운동시간 (분)<input name="duration" type="number" min="1" step="1" placeholder="90" required></label>
+      </div>
+      <div class="form-grid">
+        <label>상승고도 (m)<input name="elevation" type="number" min="0" step="1" placeholder="250"></label>
+        <label>훈련량<input name="load" type="number" min="0" step="1" placeholder="80"></label>
+      </div>
+      <label>메모 <textarea name="note" placeholder="오늘 컨디션이나 코스 메모"></textarea></label>
+      <div class="dialog-actions"><button class="secondary" type="button" id="cancel-add">취소</button><button type="submit">저장</button></div>
+    </form>
+  </dialog>
+  <dialog class="record-dialog" id="goals-form">
+    <form id="goal-form">
+      <h3>목표 설정</h3>
+      <label>주간 거리 목표 (km)<input name="weeklyDistance" type="number" min="1" step="1" required></label>
+      <label>주간 훈련량 목표<input name="weeklyLoad" type="number" min="1" step="1" required></label>
+      <label>월간 거리 목표 (km)<input name="monthlyDistance" type="number" min="1" step="1" required></label>
+      <div class="dialog-actions"><button class="secondary" type="button" id="cancel-goals">취소</button><button type="submit">저장</button></div>
+    </form>
+  </dialog>
+  <script>
+    const storageKey='ride-week-records-v1';
+    const goalsStorageKey='ride-week-goals-v1';
+    const iconNames={sun:'해',moon:'달',rain:'비',wind:'바람',mountain:'산',medal:'메달'};
+    const iconPaths={
+      sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+      moon:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>',
+      rain:'<path d="M7 16h10a4 4 0 0 0 .5-8A6 6 0 0 0 6.1 9.8 3.2 3.2 0 0 0 7 16Z"/><path d="M8 19v2M12 19v2M16 19v2"/>',
+      wind:'<path d="M4 8h11c2 0 2-3 0-3-1 0-1 .7-1 1M4 12h15c2.5 0 2.5 4 0 4-1.3 0-1.5-1-1-1.7M4 16h7"/>',
+      mountain:'<path d="m3 20 6.5-10 3.5 5 2.5-4 5.5 9H3Z"/><path d="m8 12 1.5 2 1.2-1.7"/>',
+      medal:'<path d="M8 3h8l-1.5 7h-5L8 3Z"/><circle cx="12" cy="16" r="5"/><path d="m12 13 1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2-1.5-1.4 2-.3 1-2Z"/>',
+      bike:'<circle cx="5" cy="17" r="4"/><circle cx="19" cy="17" r="4"/><path d="m5 17 4-9 6 9H5m4-9h6m-6 0 4 9m2-9-2 9m2-9 1-3h3m-9-6H7L5.5 5"/>',
+      group:'<g opacity=".48"><circle cx="3.5" cy="18" r="2.3"/><circle cx="10" cy="18" r="2.3"/><path d="m3.5 18 2-5 3 5h-5m2-5h3m-3 0 1-2m2 2 .7-2h2m-2.7 2 2.5 5"/></g><circle cx="14" cy="18" r="2.7"/><circle cx="20.5" cy="18" r="2.7"/><path d="m14 18 2.3-6 3.1 6H14m2.3-6h3.1m-3.1 0 1.2-2.2m1.9 2.2.8-2.2h2m-2.8 2.2 2.1 6"/>'
+    };
+    const iconSvg=name=>{const safeName=iconNames[name]?name:'sun';return `<svg class="symbol-${safeName}" viewBox="0 0 24 24" aria-hidden="true">${iconPaths[safeName]}</svg>`;};
+    const today=new Date();
+    const iso=date=>date.toISOString().slice(0,10);
+    const dayOffset=days=>{const d=new Date(today);d.setDate(d.getDate()-days);return iso(d);};
+    const seedRecords=[
+      ['한강 야간 라이딩',0,26.4,78,202,58],['남산 업힐',2,18.7,58,196,41],['아침 동네 한 바퀴',4,14.2,46,84,27],
+      ['북악 스카이웨이',7,31.8,102,265,68],['주말 회복 라이딩',9,22.1,69,91,33],['남산 업힐',14,24.8,82,231,52],
+      ['한강 라이딩',21,38.4,117,271,79],['북한강 라이딩',28,39.5,118,264,70],['토요일 라이딩',35,44.1,139,388,95],
+      ['한강 라이딩',42,36.8,112,291,78],['아침 라이딩',49,41.3,127,346,86],['주말 장거리',56,27.6,82,189,57]
+    ].map((r,i)=>({id:`seed-${i}`,title:r[0],date:dayOffset(r[1]),distance:r[2],duration:r[3],elevation:r[4],load:r[5],note:'',icon:['moon','moon','sun','mountain','sun','medal','sun','mountain','wind','sun','rain','sun'][i]}));
+    let records=[];
+    try { records=JSON.parse(localStorage.getItem(storageKey)) || seedRecords; } catch { records=seedRecords; }
+    let goals={weeklyDistance:100,weeklyLoad:200,monthlyDistance:400};
+    try { goals={...goals,...JSON.parse(localStorage.getItem(goalsStorageKey))}; } catch {}
+    let activePeriod='week';
+    const detail=document.querySelector('#detail');
+    const recordForm=document.querySelector('#record-form');
+    let editingId=null;
+    const parseDate=value=>new Date(`${value}T00:00:00`);
+    const formatDate=date=>`${date.getMonth()+1}월 ${date.getDate()}일`;
+    const formatDuration=minutes=>minutes>=60?`${Math.floor(minutes/60)}시간 ${minutes%60?`${minutes%60}분`:''}`:`${minutes}분`;
+    const startWeek=date=>{const d=new Date(date);d.setHours(0,0,0,0);d.setDate(d.getDate()-d.getDay());return d;};
+    const addDays=(date,days)=>{const d=new Date(date);d.setDate(d.getDate()+days);return d;};
+    const total=items=>items.reduce((sum,item)=>({distance:sum.distance+item.distance,duration:sum.duration+item.duration,elevation:sum.elevation+item.elevation,load:sum.load+item.load}),{distance:0,duration:0,elevation:0,load:0});
+    const sorted=()=>[...records].sort((a,b)=>b.date.localeCompare(a.date));
+    const labelFor=record=>record.date===iso(today)?'오늘':formatDate(parseDate(record.date));
+    const showDetail=id=>{const r=records.find(item=>item.id===id);if(!r)return;editingId=id;document.querySelector('#detail-title').textContent=r.title;document.querySelector('#detail-text').textContent=`${formatDate(parseDate(r.date))} · ${r.distance.toFixed(1)}km · ${formatDuration(r.duration)} · 상승 ${r.elevation}m · 훈련량 ${r.load}${r.note?`\n\n${r.note}`:''}`;document.querySelector('#edit-detail').hidden=false;detail.showModal();};
+    function openEditor(record=null){const form=document.querySelector('#ride-form');editingId=record?.id||null;form.reset();form.querySelector('h3').textContent=record?'라이딩 기록 수정':'라이딩 기록 추가';form.elements.title.value=record?.title||'';form.elements.date.value=record?.date||iso(today);form.elements.distance.value=record?.distance||'';form.elements.duration.value=record?.duration||'';form.elements.elevation.value=record?.elevation||'';form.elements.load.value=record?.load||'';form.elements.note.value=record?.note||'';renderIconPicker(record?.icon||'sun');recordForm.showModal();}
+    function renderRideRows(target,items,withDelete=false){target.innerHTML=items.length?items.map(r=>`<button class="ride" data-ride-id="${r.id}"><span class="ride-icon">${iconSvg(r.icon||'bike')}</span><span class="ride-copy"><span class="ride-name">${r.title}</span><span class="ride-meta">${labelFor(r)} · ${r.distance.toFixed(1)}km · ${formatDuration(r.duration)}</span></span>${withDelete?`<span class="delete" data-delete-id="${r.id}" aria-label="기록 삭제">×</span>`:'<span class="chevron">›</span>'}</button>`).join(''):'<p class="empty">아직 기록이 없어요.<br>첫 라이딩을 추가해 보세요.</p>';}
+    function renderIconPicker(selected='sun'){const safeSelected=iconNames[selected]?selected:'sun';document.querySelector('#ride-icon').value=safeSelected;document.querySelector('#icon-picker').innerHTML=Object.keys(iconNames).map(name=>`<button class="icon-choice ${name===safeSelected?'selected':''}" type="button" data-icon="${name}" aria-label="${iconNames[name]}">${iconSvg(name)}</button>`).join('');}
+    function renderChart(){const currentStart=startWeek(today);const weeks=Array.from({length:12},(_,i)=>addDays(currentStart,(i-11)*7));const charts={labels:weeks.map(d=>`${d.getMonth()+1}/${d.getDate()}`),distance:[],duration:[],elevation:[],load:[]};weeks.forEach(start=>{const end=addDays(start,7);const t=total(records.filter(r=>{const d=parseDate(r.date);return d>=start&&d<end;}));Object.keys(charts).filter(k=>k!=='labels').forEach(key=>charts[key].push(t[key]));});const labels=charts.labels;const x=i=>24+i*(292/(labels.length-1));const top=18;const height=112;const scale=values=>values.map(v=>top+(1-v/Math.max(...values,1))*height);const series=[['distance','#58a8c9'],['elevation','#edc64b'],['duration','#72ba5d'],['load','#cf6b68']];const points=values=>values.map((y,i)=>`${x(i)},${y}`).join(' ');const grid=[0,1,2].map(i=>`<line x1="18" y1="${top+i*56}" x2="326" y2="${top+i*56}" stroke="#e8eee9" stroke-width="1"/>`).join('');const lines=series.map(([key,color])=>{const values=scale(charts[key]);return `<polyline points="${points(values)}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${values.map((y,i)=>`<circle cx="${x(i)}" cy="${y}" r="3" fill="${color}"/>`).join('')}`;}).join('');const weekLabels=labels.map((label,i)=>`<text x="${x(i)}" y="151" text-anchor="middle" class="axis-label">${label}</text>`).join('');document.querySelector('#weekly-chart').innerHTML=`${grid}${lines}${weekLabels}`;}
+    function renderHome(){const currentStart=startWeek(today);const start=activePeriod==='week'?currentStart:new Date(today.getFullYear(),today.getMonth(),1);const end=activePeriod==='week'?addDays(currentStart,7):new Date(today.getFullYear(),today.getMonth()+1,1);const previousStart=activePeriod==='week'?addDays(start,-7):new Date(today.getFullYear(),today.getMonth()-1,1);const previousEnd=start;const current=total(records.filter(r=>{const d=parseDate(r.date);return d>=start&&d<end;}));const previous=total(records.filter(r=>{const d=parseDate(r.date);return d>=previousStart&&d<previousEnd;}));const goal=activePeriod==='week'?goals.weeklyDistance:goals.monthlyDistance;const title=activePeriod==='week'?'이번 주':'이번 달';const range=activePeriod==='week'?`${formatDate(start)} — ${formatDate(addDays(end,-1))}`:`${today.getMonth()+1}월 1일 — ${today.getMonth()+1}월 ${addDays(end,-1).getDate()}일`;const diff=current.distance-previous.distance;document.querySelector('#heading').textContent=title;document.querySelector('#date').textContent=range;document.querySelector('#goal-label').textContent=activePeriod==='week'?'주간 거리 목표':'월간 거리 목표';document.querySelector('#goal-value').textContent=`${current.distance.toFixed(1)} / ${goal} km`;document.querySelector('#goal-note').textContent=diff>=0?`지난 기간보다 ${diff.toFixed(1)}km 더 달렸어요. 잘하고 있어요!`:`지난 기간보다 ${Math.abs(diff).toFixed(1)}km 적어요. 다음 라이딩을 계획해 볼까요?`;document.querySelector('#progress').style.width=`${Math.min(current.distance/goal*100,100)}%`;document.querySelector('#stat-heading').textContent=`${title} 기록`;document.querySelector('#distance').textContent=current.distance.toFixed(1);document.querySelector('#duration').textContent=`${Math.floor(current.duration/60)}:${String(current.duration%60).padStart(2,'0')}`;document.querySelector('#elevation').textContent=current.elevation.toLocaleString();document.querySelector('#training-load').textContent=current.load.toLocaleString();document.querySelectorAll('[data-period]').forEach(b=>b.classList.toggle('active',b.dataset.period===activePeriod));renderRideRows(document.querySelector('#rides'),sorted().slice(0,5));renderChart();}
+    function renderGoals(){document.querySelector('#weekly-distance-goal').textContent=`${goals.weeklyDistance} km`;document.querySelector('#weekly-load-goal').textContent=goals.weeklyLoad;document.querySelector('#monthly-distance-goal').textContent=`${goals.monthlyDistance} km`;}
+    function renderAll(){renderHome();renderGoals();renderRideRows(document.querySelector('#record-list'),sorted(),true);}
+    function save(){localStorage.setItem(storageKey,JSON.stringify(records));renderAll();}
+    function showPage(page){document.querySelector('#home-page').hidden=page!=='home';document.querySelector('#rides-page').hidden=page!=='rides';document.querySelector('#goals-page').hidden=page!=='goals';document.querySelector('#settings-page').hidden=page!=='settings';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));}
+    document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{activePeriod=b.dataset.period;renderHome();}));
+    document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+    document.querySelector('#rides').addEventListener('click',e=>{const b=e.target.closest('[data-ride-id]');if(b)showDetail(b.dataset.rideId);});
+    document.querySelector('#record-list').addEventListener('click',e=>{const del=e.target.closest('[data-delete-id]');if(del){records=records.filter(r=>r.id!==del.dataset.deleteId);save();return;}const b=e.target.closest('[data-ride-id]');if(b)showDetail(b.dataset.rideId);});
+    document.querySelector('#close-detail').addEventListener('click',()=>detail.close());
+    document.querySelector('#all-rides').addEventListener('click',()=>showPage('rides'));
+    document.querySelector('#open-add').addEventListener('click',()=>openEditor());
+    document.querySelector('#icon-picker').addEventListener('click',e=>{const button=e.target.closest('[data-icon]');if(button)renderIconPicker(button.dataset.icon);});
+    document.querySelector('#cancel-add').addEventListener('click',()=>recordForm.close());
+    document.querySelector('#ride-form').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const data={id:editingId||`ride-${Date.now()}`,title:f.get('title').trim(),date:f.get('date'),distance:Number(f.get('distance')),duration:Number(f.get('duration')),elevation:Number(f.get('elevation'))||0,load:Number(f.get('load'))||0,note:f.get('note').trim(),icon:f.get('icon')||'sun'};if(editingId){records=records.map(r=>r.id===editingId?data:r);}else{records.push(data);}editingId=null;recordForm.close();save();});
+    document.querySelector('#edit-detail').addEventListener('click',()=>{const record=records.find(r=>r.id===editingId);if(record){detail.close();openEditor(record);}});
+    document.querySelector('#open-goals').addEventListener('click',()=>{const form=document.querySelector('#goal-form');form.elements.weeklyDistance.value=goals.weeklyDistance;form.elements.weeklyLoad.value=goals.weeklyLoad;form.elements.monthlyDistance.value=goals.monthlyDistance;document.querySelector('#goals-form').showModal();});
+    document.querySelector('#cancel-goals').addEventListener('click',()=>document.querySelector('#goals-form').close());
+    document.querySelector('#goal-form').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);goals={weeklyDistance:Number(f.get('weeklyDistance')),weeklyLoad:Number(f.get('weeklyLoad')),monthlyDistance:Number(f.get('monthlyDistance'))};localStorage.setItem(goalsStorageKey,JSON.stringify(goals));document.querySelector('#goals-form').close();renderAll();});
+    document.querySelector('#export-data').addEventListener('click',()=>{const backup={version:1,exportedAt:new Date().toISOString(),records,goals};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`ride-week-backup-${iso(today)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);});
+    document.querySelector('#import-data').addEventListener('click',()=>document.querySelector('#import-file').click());
+    document.querySelector('#import-file').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const backup=JSON.parse(reader.result);if(!Array.isArray(backup.records))throw new Error('invalid');if(!confirm('현재 기록을 백업 파일의 내용으로 교체할까요?'))return;records=backup.records;goals={...goals,...(backup.goals||{})};localStorage.setItem(storageKey,JSON.stringify(records));localStorage.setItem(goalsStorageKey,JSON.stringify(goals));renderAll();document.querySelector('#detail-title').textContent='복원 완료';document.querySelector('#detail-text').textContent=`${records.length}개의 라이딩 기록을 불러왔어요.`;document.querySelector('#edit-detail').hidden=true;detail.showModal();}catch{alert('Ride Week에서 만든 올바른 백업 파일을 선택해 주세요.');}finally{e.target.value='';}};reader.readAsText(file);});
+    renderIconPicker();renderAll(); if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
+  </script>
+</body>
+</html>
