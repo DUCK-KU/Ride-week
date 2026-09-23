@@ -98,6 +98,18 @@
     .settings-action .action-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
     .settings-action strong { display:block; font-size:15px; }
     .settings-action span { display:block; margin-top:3px; color:var(--muted); font-size:12px; }
+    .strava-card { margin-top:24px; padding:18px; border-radius:20px; background:var(--deep); color:white; }
+    .strava-card h2 { margin:0; font-size:18px; }
+    .strava-card p { margin:6px 0 15px; color:#c5ddd3; font-size:13px; line-height:1.45; }
+    .strava-key { display:flex; gap:8px; }
+    .strava-key input { min-width:0; flex:1; padding:11px 12px; border:1px solid #547466; border-radius:12px; background:#264d40; color:white; font:inherit; }
+    .strava-key input::placeholder { color:#a9c2b8; }
+    .strava-key button, .strava-buttons button { border:0; border-radius:12px; font-weight:750; }
+    .strava-key button { padding:0 13px; background:#6fe5b0; color:#123b2d; }
+    .strava-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+    .strava-buttons button { min-height:44px; background:#6fe5b0; color:#123b2d; }
+    .strava-buttons .secondary { background:#315b4c; color:#e7f2ec; }
+    .strava-status { margin:12px 1px 0 !important; color:#e0efe8 !important; font-size:12px !important; }
   </style>
 </head>
 <body>
@@ -153,6 +165,13 @@
   </main>
   <main class="app page" id="settings-page" hidden>
     <header class="page-header"><div><h1>설정</h1><p class="date">기록을 안전하게 관리하세요</p></div></header>
+    <section class="strava-card" aria-label="Strava 연결">
+      <h2>Strava 연결</h2>
+      <p>개인 동기화 키는 이 기기에만 저장됩니다.</p>
+      <div class="strava-key"><input id="strava-key" type="password" autocomplete="new-password" placeholder="개인 동기화 키 입력"><button id="save-strava-key" type="button">저장</button></div>
+      <div class="strava-buttons"><button class="secondary" id="connect-strava" type="button">Strava 연결</button><button id="sync-strava" type="button">기록 동기화</button></div>
+      <p class="strava-status" id="strava-status">동기화 키를 먼저 저장해 주세요.</p>
+    </section>
     <section class="settings-actions" aria-label="데이터 관리">
       <button class="settings-action" type="button" id="export-data"><div class="action-icon">↓</div><div><strong>기록 백업 내보내기</strong><span>라이딩 기록과 목표를 파일로 저장</span></div></button>
       <button class="settings-action" type="button" id="import-data"><div class="action-icon">↑</div><div><strong>기록 백업 가져오기</strong><span>저장한 백업 파일로 기록 복원</span></div></button>
@@ -195,6 +214,8 @@
   <script>
     const storageKey='ride-week-records-v1';
     const goalsStorageKey='ride-week-goals-v1';
+    const stravaKeyStorageKey='ride-week-strava-sync-key-v1';
+    const stravaWorkerUrl='https://purple-brook-38dcride-week-strava.kimduckgeun.workers.dev';
     const iconNames={sun:'해',moon:'달',rain:'비',wind:'바람',mountain:'산',medal:'메달'};
     const iconPaths={
       sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -221,6 +242,7 @@
     let goals={weeklyDistance:100,weeklyLoad:200,monthlyDistance:400};
     try { goals={...goals,...JSON.parse(localStorage.getItem(goalsStorageKey))}; } catch {}
     let activePeriod='week';
+    let stravaSyncKey=localStorage.getItem(stravaKeyStorageKey)||'';
     const detail=document.querySelector('#detail');
     const recordForm=document.querySelector('#record-form');
     let editingId=null;
@@ -241,6 +263,20 @@
     function renderGoals(){document.querySelector('#weekly-distance-goal').textContent=`${goals.weeklyDistance} km`;document.querySelector('#weekly-load-goal').textContent=goals.weeklyLoad;document.querySelector('#monthly-distance-goal').textContent=`${goals.monthlyDistance} km`;}
     function renderAll(){renderHome();renderGoals();renderRideRows(document.querySelector('#record-list'),sorted(),true);}
     function save(){localStorage.setItem(storageKey,JSON.stringify(records));renderAll();}
+    function setStravaStatus(message){document.querySelector('#strava-status').textContent=message;}
+    async function syncStrava(){
+      if(!stravaSyncKey){setStravaStatus('개인 동기화 키를 먼저 입력하고 저장해 주세요.');return;}
+      const button=document.querySelector('#sync-strava');button.disabled=true;button.textContent='동기화 중…';setStravaStatus('Strava에서 라이딩 기록을 가져오는 중이에요.');
+      try{
+        const response=await fetch(`${stravaWorkerUrl}/api/activities`,{headers:{'x-ride-week-key':stravaSyncKey}});
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error||'동기화에 실패했습니다.');
+        const synced=data.rides||[];const syncedIds=new Set(synced.map(r=>r.id));records=[...records.filter(r=>!syncedIds.has(r.id)),...synced];save();
+        setStravaStatus(`${synced.length}개의 Strava 라이딩을 가져왔어요.`);
+        document.querySelector('#detail-title').textContent='동기화 완료';document.querySelector('#detail-text').textContent=`Strava 라이딩 ${synced.length}개를 기록에 반영했어요.`;document.querySelector('#edit-detail').hidden=true;detail.showModal();
+      }catch(error){setStravaStatus(error.message||'동기화에 실패했습니다.');}
+      finally{button.disabled=false;button.textContent='기록 동기화';}
+    }
     function showPage(page){document.querySelector('#home-page').hidden=page!=='home';document.querySelector('#rides-page').hidden=page!=='rides';document.querySelector('#goals-page').hidden=page!=='goals';document.querySelector('#settings-page').hidden=page!=='settings';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));}
     document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{activePeriod=b.dataset.period;renderHome();}));
     document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
@@ -259,6 +295,12 @@
     document.querySelector('#export-data').addEventListener('click',()=>{const backup={version:1,exportedAt:new Date().toISOString(),records,goals};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`ride-week-backup-${iso(today)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);});
     document.querySelector('#import-data').addEventListener('click',()=>document.querySelector('#import-file').click());
     document.querySelector('#import-file').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const backup=JSON.parse(reader.result);if(!Array.isArray(backup.records))throw new Error('invalid');if(!confirm('현재 기록을 백업 파일의 내용으로 교체할까요?'))return;records=backup.records;goals={...goals,...(backup.goals||{})};localStorage.setItem(storageKey,JSON.stringify(records));localStorage.setItem(goalsStorageKey,JSON.stringify(goals));renderAll();document.querySelector('#detail-title').textContent='복원 완료';document.querySelector('#detail-text').textContent=`${records.length}개의 라이딩 기록을 불러왔어요.`;document.querySelector('#edit-detail').hidden=true;detail.showModal();}catch{alert('Ride Week에서 만든 올바른 백업 파일을 선택해 주세요.');}finally{e.target.value='';}};reader.readAsText(file);});
+    document.querySelector('#save-strava-key').addEventListener('click',()=>{const input=document.querySelector('#strava-key');const value=input.value.trim();if(!value){setStravaStatus('동기화 키를 입력해 주세요.');return;}stravaSyncKey=value;localStorage.setItem(stravaKeyStorageKey,value);input.value='';setStravaStatus('동기화 키를 이 기기에 저장했어요. 이제 Strava 연결을 눌러 주세요.');});
+    document.querySelector('#connect-strava').addEventListener('click',()=>{if(!stravaSyncKey){setStravaStatus('동기화 키를 먼저 입력하고 저장해 주세요.');return;}location.href=`${stravaWorkerUrl}/auth/strava?key=${encodeURIComponent(stravaSyncKey)}`;});
+    document.querySelector('#sync-strava').addEventListener('click',syncStrava);
+    document.querySelector('#strava-key').value='';
+    if(new URLSearchParams(location.search).get('strava')==='connected'){setStravaStatus('Strava 연결이 완료됐어요. 기록 동기화를 눌러 주세요.');history.replaceState({},'',location.pathname);}
+    else if(stravaSyncKey)setStravaStatus('동기화 키가 이 기기에 저장되어 있어요.');
     renderIconPicker();renderAll(); if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
   </script>
 </body>
