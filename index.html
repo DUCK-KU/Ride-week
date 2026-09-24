@@ -50,11 +50,13 @@
     .power-zones-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:12px; }
     .power-zones-head strong { color:var(--deep); font-size:14px; }
     .power-zones-head span { color:var(--muted); font-size:11px; }
-    .power-zone { display:grid; grid-template-columns:30px 1fr 48px; align-items:center; gap:8px; margin-top:8px; font-size:11px; color:var(--muted); }
-    .power-zone b { color:var(--deep); font-size:11px; }
-    .power-zone-track { height:9px; overflow:hidden; border-radius:999px; background:#edf1ee; }
-    .power-zone-track i { display:block; height:100%; min-width:0; border-radius:inherit; }
-    .power-zone time { text-align:right; font-variant-numeric:tabular-nums; }
+    .power-zone-stack { display:flex; width:100%; height:18px; overflow:hidden; border-radius:999px; background:#edf1ee; box-shadow:inset 0 0 0 1px #00000008; }
+    .power-zone-segment { height:100%; min-width:0; transition:width .25s ease; }
+    .power-zone-legend { display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:9px; margin-top:9px; color:var(--muted); font-size:11px; }
+    .power-zone-label { display:flex; align-items:center; gap:6px; color:var(--deep); font-weight:800; }
+    .power-zone-label i { width:8px; height:8px; border-radius:50%; }
+    .power-zone-legend span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .power-zone-legend time { color:var(--deep); font-variant-numeric:tabular-nums; font-weight:700; text-align:right; }
     .power-zone-empty { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
     .stat { min-width:0; padding:12px 4px; border-radius:15px; background:white; text-align:center; }
     .stat .icon { display:grid; height:19px; place-items:center; color:var(--green); }
@@ -76,7 +78,8 @@
     [hidden] { display:none !important; }
     .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; background:transparent; color:var(--muted); font-size:11px; }
     .nav button.active { color:var(--green); font-weight:800; }
-    .nav b { font-size:20px; font-weight:500; }
+    .nav b { display:grid; width:22px; height:22px; place-items:center; font-size:20px; font-weight:500; }
+    .nav b svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
     dialog { width:min(360px,calc(100% - 40px)); border:0; border-radius:22px; padding:22px; box-shadow:0 18px 50px #0004; }
     dialog::backdrop { background:#14221c88; }
     dialog h3 { margin:0 0 8px; }
@@ -119,6 +122,7 @@
     .goal-settings { display:grid; gap:11px; margin-top:24px; }
     .goal-setting { display:flex; align-items:center; gap:13px; padding:16px; border-radius:18px; background:white; }
     .goal-setting .goal-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:18px; }
+    .goal-setting .goal-icon svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.9; }
     .goal-setting strong { display:block; font-size:15px; }
     .goal-setting span { display:block; margin-top:3px; color:var(--muted); font-size:13px; }
     .goal-setting b { margin-left:auto; font-size:18px; }
@@ -143,7 +147,9 @@
     .strava-status { margin:12px 1px 0 !important; color:#e0efe8 !important; font-size:12px !important; }
     .ftp-setting { margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.15); }
     .ftp-setting label { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#e7f2ec; font-size:13px; font-weight:700; }
+    .ftp-control { display:flex; align-items:center; gap:7px; }
     .ftp-setting input { width:92px; min-height:40px; border:0; border-radius:10px; padding:0 10px; background:#f5faf7; color:#173b2e; text-align:right; font:inherit; }
+    .ftp-setting button { min-height:40px; border:0; border-radius:10px; padding:0 12px; background:#6fe5b0; color:#123b2d; font-weight:800; }
     .ftp-setting p { margin:7px 0 0 !important; color:#c5ddd3 !important; font-size:11px !important; }
     @media (max-width:380px) { .stats { grid-template-columns:repeat(2,1fr); } .app { padding-right:14px; padding-left:14px; } .ride { gap:10px; padding:11px; border-radius:15px; } .ride-icon { width:38px; height:38px; } .ride-name { font-size:14px; } .ride-meta { font-size:11px; } }
   </style>
@@ -206,7 +212,7 @@
       <div class="strava-key"><input id="strava-key" type="password" autocomplete="new-password" placeholder="개인 동기화 키 입력"><button id="save-strava-key" type="button">저장</button><button class="key-lock" id="toggle-strava-key" type="button" aria-label="동기화 키 잠금 해제" hidden>🔒</button></div>
       <div class="strava-buttons"><button class="secondary" id="connect-strava" type="button">Strava 연결</button><button id="sync-strava" type="button">기록 동기화</button></div>
       <p class="strava-status" id="strava-status">동기화 키를 먼저 저장해 주세요.</p>
-      <div class="ftp-setting"><label>현재 FTP <span><input id="ftp-value" type="number" min="50" max="600" step="1" inputmode="numeric" value="201"> W</span></label><p>IF, TSS와 Z1~Z7 계산에 사용됩니다.</p></div>
+      <div class="ftp-setting"><label>현재 FTP <span class="ftp-control"><span><input id="ftp-value" type="number" min="50" max="600" step="1" inputmode="numeric" value="201"> W</span><button id="apply-ftp" type="button">적용</button></span></label><p>IF, TSS와 Z1~Z7 계산에 사용됩니다.</p></div>
     </section>
     <section id="settings-goals">
     <header class="page-header">
@@ -214,8 +220,8 @@
       <button class="add-button" type="button" id="open-goals">수정</button>
     </header>
     <section class="goal-settings" aria-label="현재 목표">
-      <div class="goal-setting"><div class="goal-icon">⌁</div><div><strong>주간 거리</strong><span>이번 주 목표</span></div><b id="weekly-distance-goal">100 km</b></div>
-      <div class="goal-setting"><div class="goal-icon">♨</div><div><strong>주간 훈련량</strong><span>이번 주 목표</span></div><b id="weekly-load-goal">200</b></div>
+      <div class="goal-setting"><div class="goal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21 9 3M18 21 15 3M12 5v3M12 11v3M12 17v2"/></svg></div><div><strong>주간 거리</strong><span>이번 주 목표</span></div><b id="weekly-distance-goal">100 km</b></div>
+      <div class="goal-setting"><div class="goal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c-3.5 0-6-2.6-6-6.2C6 11.5 10 8.5 12.2 3c2.4 4.2 5.8 6.8 5.8 11.6 0 3.9-2.5 7.4-6 7.4Z"/><path d="M12 21c-1.5 0-2.5-1.1-2.5-2.7 0-1.5 1.5-3 2.5-4.7 1.1 1.5 2.5 2.7 2.5 4.7C14.5 19.9 13.5 21 12 21Z"/></svg></div><div><strong>주간 훈련량</strong><span>이번 주 목표</span></div><b id="weekly-load-goal">200</b></div>
       <div class="goal-setting"><div class="goal-icon">◷</div><div><strong>월간 거리</strong><span>이번 달 목표</span></div><b id="monthly-distance-goal">400 km</b></div>
     </section>
   </section>
@@ -227,7 +233,7 @@
     </section>
   </main>
   <nav class="bottom" aria-label="주 메뉴"><div class="nav">
-    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b>♧</b>라이딩</button><button data-page="settings"><b>⚙</b>설정</button>
+    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b>♧</b>라이딩</button><button data-page="settings"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.07 14H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9a1.7 1.7 0 0 0 1.56 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg></b>설정</button>
   </div></nav>
   <dialog id="detail"><h3 id="detail-title"></h3><p id="detail-text"></p><section class="activity-analysis" id="activity-analysis" hidden><div class="activity-metrics" id="activity-metrics"></div><p class="activity-insight" id="activity-insight"></p><div class="stream-tabs" id="stream-tabs"></div><svg class="stream-chart" id="stream-chart" viewBox="0 0 300 136" role="img" aria-label="파워, 케이던스, 심박, 고도 통합 그래프"></svg></section><div class="dialog-actions"><button class="secondary" type="button" id="edit-detail">수정</button><button type="button" id="close-detail">닫기</button></div></dialog>
   <dialog class="record-dialog" id="record-form">
@@ -301,6 +307,17 @@
     let editingId=null;
     const parseDate=value=>new Date(`${value}T00:00:00`);
     const formatDate=date=>`${date.getMonth()+1}월 ${date.getDate()}일`;
+    function automaticRideIcon(record){
+      const title=String(record.title||'').toLowerCase();
+      if(title.includes('그란폰도')||title.includes('gran fondo')||title.includes('granfondo'))return 'medal';
+      const windValues=[record.windSpeed,record.wind_speed,record.weatherWindSpeed,record.weather?.windSpeed,record.windGust,record.wind_gust].map(Number).filter(Number.isFinite);
+      if((windValues.length&&Math.max(...windValues)>=8)||/(강풍|센\s*바람|돌풍|windy|strong wind)/i.test(title))return 'wind';
+      if(/(야간|저녁|밤\s*라이딩|night ride|evening ride)/i.test(title))return 'moon';
+      const startedAt=record.startDateLocal||record.start_date_local||record.startDate||record.start_date||record.startedAt||record.dateTime;
+      const match=String(startedAt||'').match(/[T\s](\d{2}):/);const hour=match?Number(match[1]):null;
+      return hour!==null&&(hour<6||hour>=18)?'moon':'sun';
+    }
+    records=records.map(record=>record.stravaId?{...record,icon:automaticRideIcon(record)}:record);
     const formatDuration=minutes=>minutes>=60?`${Math.floor(minutes/60)}시간 ${minutes%60?`${minutes%60}분`:''}`:`${minutes}분`;
     const startWeek=date=>{const d=new Date(date);d.setHours(0,0,0,0);d.setDate(d.getDate()-d.getDay());return d;};
     const addDays=(date,days)=>{const d=new Date(date);d.setDate(d.getDate()+days);return d;};
@@ -316,13 +333,13 @@
       return {ftp,np:Math.round(np),if:Number(intensityFactor.toFixed(2)),tss:Math.round(tss),zones};
     }
     function periodPowerSummary(items){const powered=items.filter(item=>item.powerMetrics);const duration=powered.reduce((sum,item)=>sum+item.duration,0);const zones=Array(7).fill(0);powered.forEach(item=>(item.powerMetrics.zones||[]).forEach((value,index)=>zones[index]+=value||0));return {np:duration?Math.round(powered.reduce((sum,item)=>sum+item.powerMetrics.np*item.duration,0)/duration):null,if:duration?powered.reduce((sum,item)=>sum+item.powerMetrics.if*item.duration,0)/duration:null,tss:powered.reduce((sum,item)=>sum+item.powerMetrics.tss,0),zones,powered:powered.length};}
-    function renderPowerZones(summary,title){const totalSeconds=summary.zones.reduce((sum,value)=>sum+value,0);document.querySelector('#power-zones-title').textContent=`${title} 파워존`;document.querySelector('#power-zones-total').textContent=totalSeconds?`총 ${formatZoneTime(totalSeconds)} · FTP ${ftp}W`:`FTP ${ftp}W 기준`;document.querySelector('#power-zones-list').innerHTML=totalSeconds?summary.zones.map((seconds,index)=>{const [label,min,max,color]=zoneDefinitions[index];const range=max===Infinity?`${Math.round(min*ftp)}W+`:`${Math.round(min*ftp)}–${Math.round(max*ftp)}W`;return `<div class="power-zone"><b>${label}</b><div class="power-zone-track" title="${range}"><i style="width:${seconds/totalSeconds*100}%;background:${color}"></i></div><time>${formatZoneTime(seconds)}</time></div>`;}).join(''):'<p class="power-zone-empty">파워 데이터가 있는 Strava 라이딩을 동기화하면 존별 시간이 표시됩니다.</p>';}
+    function renderPowerZones(summary,title){const totalSeconds=summary.zones.reduce((sum,value)=>sum+value,0);document.querySelector('#power-zones-title').textContent=`${title} 파워존`;document.querySelector('#power-zones-total').textContent=totalSeconds?`총 ${formatZoneTime(totalSeconds)} · FTP ${ftp}W`:`FTP ${ftp}W 기준`;if(!totalSeconds){document.querySelector('#power-zones-list').innerHTML='<p class="power-zone-empty">파워 데이터가 있는 Strava 라이딩을 동기화하면 존별 시간이 표시됩니다.</p>';return;}const zones=summary.zones.map((seconds,index)=>{const [label,min,max,color]=zoneDefinitions[index];const range=max===Infinity?`${Math.round(min*ftp)}W+`:`${Math.round(min*ftp)}–${Math.round(max*ftp)}W`;const percent=seconds/totalSeconds*100;return {label,range,color,seconds,percent};});const bar=zones.map(zone=>`<i class="power-zone-segment" style="width:${zone.percent}%;background:${zone.color}" title="${zone.label} · ${zone.percent.toFixed(1)}% · ${formatZoneTime(zone.seconds)}" aria-hidden="true"></i>`).join('');const legend=zones.map(zone=>`<div class="power-zone-legend"><b class="power-zone-label"><i style="background:${zone.color}"></i>${zone.label}</b><span>${zone.range} · ${zone.percent.toFixed(1)}%</span><time>${formatZoneTime(zone.seconds)}</time></div>`).join('');document.querySelector('#power-zones-list').innerHTML=`<div class="power-zone-stack" role="img" aria-label="${zones.map(zone=>`${zone.label} ${zone.percent.toFixed(1)}퍼센트`).join(', ')}">${bar}</div>${legend}`;}
     const sorted=()=>[...records].sort((a,b)=>b.date.localeCompare(a.date));
     const labelFor=record=>{const date=parseDate(record.date);return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;};
     const showDetail=id=>{const r=records.find(item=>item.id===id);if(!r)return;editingId=id;document.querySelector('#detail-title').textContent=r.title;document.querySelector('#detail-text').textContent=`${formatDate(parseDate(r.date))} · ${r.distance.toFixed(1)}km · ${formatDuration(r.duration)} · 상승 ${r.elevation}m · 훈련량 ${r.load}${r.note?`\n\n${r.note}`:''}`;document.querySelector('#activity-analysis').hidden=true;document.querySelector('#edit-detail').hidden=false;detail.showModal();if(r.stravaId)loadActivityAnalysis(r);};
     function renderStreams(){const colors={watts:'#d8a51d',cadence:'#479ac0',heartrate:'#d15f62',altitude:'#62a36a'};const names={watts:'파워',cadence:'케이던스',heartrate:'심박',altitude:'고도'};const active=Object.keys(activityStreams).filter(name=>visibleStreams.has(name));const grid=[20,50,80,110].map(y=>`<line x1="14" y1="${y}" x2="286" y2="${y}" stroke="#e9eeea"/>`).join('');const lines=active.map((name,index)=>{const values=activityStreams[name];const max=Math.max(...values,1);const min=Math.min(...values,0);const x=i=>14+i*(272/Math.max(values.length-1,1));const y=value=>110-(value-min)/Math.max(max-min,1)*90;const points=values.map((value,i)=>`${x(i)},${y(value)}`).join(' ');return `<polyline points="${points}" fill="none" stroke="${colors[name]}" stroke-width="1.8" stroke-opacity=".9" stroke-linecap="round" stroke-linejoin="round"/><text x="282" y="${18+index*12}" text-anchor="end" fill="${colors[name]}" class="stream-label">${names[name]} ${Math.round(max)}</text>`;}).join('');document.querySelector('#stream-chart').innerHTML=`${grid}${lines}<text x="14" y="128" class="stream-label">각 항목별 범위로 비교</text>`;document.querySelectorAll('[data-stream]').forEach(button=>{const on=visibleStreams.has(button.dataset.stream);button.classList.toggle('active',on);button.setAttribute('aria-pressed',String(on));});}
     function renderActivityAnalysis(data,record){const r=data.activity;const power=record.powerMetrics;const metrics=[['NP',power?`${power.np}W`:'—'],['IF',power?power.if.toFixed(2):'—'],['TSS',power?power.tss:'—'],['평균 파워',r.averageWatts?`${r.averageWatts}W`:'—'],['평균 심박',r.averageHeartRate?`${r.averageHeartRate}bpm`:'—'],['케이던스',r.averageCadence?`${r.averageCadence}rpm`:'—']];document.querySelector('#activity-metrics').innerHTML=metrics.map(([label,value])=>`<div class="activity-metric"><b>${value}</b><span>${label}</span></div>`).join('');const climbing=r.distance?Math.round(r.elevation/r.distance):0;document.querySelector('#activity-insight').textContent=power?`FTP ${power.ftp}W 기준 · ${power.if<.75?'회복·지구력 강도':power.if<.9?'중강도 유산소 훈련':power.if<1.05?'역치 중심의 고강도 훈련':'매우 높은 강도의 훈련'}입니다.`:climbing>=12?`상승고도 비중이 높은 라이딩이에요. km당 약 ${climbing}m를 올랐어요.`:`파워 데이터가 없어 NP, IF, TSS를 계산하지 못했어요.`;activityStreams=Object.fromEntries(Object.entries(data.streams||{}).filter(([,values])=>Array.isArray(values)&&values.length>1));const labels={watts:'파워',cadence:'케이던스',heartrate:'심박',altitude:'고도'};const colors={watts:'#d8a51d',cadence:'#479ac0',heartrate:'#d15f62',altitude:'#62a36a'};const available=Object.keys(activityStreams);visibleStreams=new Set(available);document.querySelector('#stream-tabs').innerHTML=available.map(name=>`<button class="active" style="--stream-color:${colors[name]}" type="button" data-stream="${name}" aria-pressed="true">${labels[name]}</button>`).join('');document.querySelector('#stream-chart').hidden=!available.length;if(available.length)renderStreams();document.querySelector('#activity-analysis').hidden=false;}
-    async function fetchActivityDetail(record){const response=await fetch(`${stravaWorkerUrl}/api/activities/${record.stravaId}`,{headers:{'x-ride-week-key':stravaSyncKey}});const data=await response.json();if(!response.ok)throw new Error(data.error||'상세 정보를 불러오지 못했습니다.');const metrics=calculatePowerMetrics(data.streams?.watts,record.duration);if(metrics){record.powerMetrics=metrics;localStorage.setItem(storageKey,JSON.stringify(records));}return data;}
+    async function fetchActivityDetail(record){const response=await fetch(`${stravaWorkerUrl}/api/activities/${record.stravaId}`,{headers:{'x-ride-week-key':stravaSyncKey}});const data=await response.json();if(!response.ok)throw new Error(data.error||'상세 정보를 불러오지 못했습니다.');record.icon=automaticRideIcon({...record,...(data.activity||{})});const metrics=calculatePowerMetrics(data.streams?.watts,record.duration);if(metrics)record.powerMetrics=metrics;localStorage.setItem(storageKey,JSON.stringify(records));return data;}
     async function loadActivityAnalysis(record){if(!stravaSyncKey)return;document.querySelector('#detail-text').textContent='센서 데이터를 불러오는 중이에요.';try{const data=await fetchActivityDetail(record);document.querySelector('#detail-text').textContent=`${formatDate(parseDate(record.date))} · ${record.distance.toFixed(1)}km · ${formatDuration(record.duration)} · 상승 ${record.elevation}m`;renderActivityAnalysis(data,record);renderHome();}catch(error){document.querySelector('#detail-text').textContent='상세 센서 데이터를 불러오지 못했어요. 다음 동기화 때 다시 시도해 주세요.';}}
     function openEditor(record=null){const form=document.querySelector('#ride-form');editingId=record?.id||null;form.reset();form.querySelector('h3').textContent=record?'라이딩 기록 수정':'라이딩 기록 추가';form.elements.title.value=record?.title||'';form.elements.date.value=record?.date||iso(today);form.elements.distance.value=record?.distance||'';form.elements.duration.value=record?.duration||'';form.elements.elevation.value=record?.elevation||'';form.elements.load.value=record?.load||'';form.elements.note.value=record?.note||'';renderIconPicker(record?.icon||'sun');recordForm.showModal();}
     function renderRideRows(target,items,withDelete=false){target.innerHTML=items.length?items.map(r=>`<button class="ride" data-ride-id="${r.id}"><span class="ride-icon">${iconSvg(r.icon||'bike')}</span><span class="ride-copy"><span class="ride-name">${r.title}</span><span class="ride-meta">${labelFor(r)} · ${r.distance.toFixed(1)}km · ${formatDuration(r.duration)}</span></span>${withDelete?`<span class="delete" data-delete-id="${r.id}" aria-label="기록 삭제">×</span>`:'<span class="chevron">›</span>'}</button>`).join(''):'<p class="empty">아직 기록이 없어요.<br>첫 라이딩을 추가해 보세요.</p>';}
@@ -340,7 +357,7 @@
       if(!stravaSyncKey){setStravaStatus('개인 동기화 키를 먼저 입력하고 저장해 주세요.');return;}
       const button=document.querySelector('#sync-strava');button.disabled=true;button.textContent='동기화 중…';setStravaStatus('Strava에서 라이딩 기록을 가져오는 중이에요.');
       try{
-        const synced=[];const seen=new Set();let pageLimitDetected=false;for(let page=1;page<=10;page++){setStravaStatus(`Strava 기록 불러오는 중… ${page}페이지`);const response=await fetch(`${stravaWorkerUrl}/api/activities?page=${page}&per_page=200`,{headers:{'x-ride-week-key':stravaSyncKey}});const data=await response.json();if(!response.ok)throw new Error(data.error||'동기화에 실패했습니다.');const batch=data.rides||[];const unique=batch.filter(record=>!seen.has(record.id));if(page>1&&batch.length&&!unique.length)pageLimitDetected=true;unique.forEach(record=>{seen.add(record.id);synced.push(record);});if(!batch.length||!unique.length)break;}
+        const synced=[];const seen=new Set();let pageLimitDetected=false;for(let page=1;page<=10;page++){setStravaStatus(`Strava 기록 불러오는 중… ${page}페이지`);const response=await fetch(`${stravaWorkerUrl}/api/activities?page=${page}&per_page=200`,{headers:{'x-ride-week-key':stravaSyncKey}});const data=await response.json();if(!response.ok)throw new Error(data.error||'동기화에 실패했습니다.');const batch=data.rides||[];const unique=batch.filter(record=>!seen.has(record.id));if(page>1&&batch.length&&!unique.length)pageLimitDetected=true;unique.forEach(record=>{record.icon=automaticRideIcon(record);seen.add(record.id);synced.push(record);});if(!batch.length||!unique.length)break;}
         const previousById=new Map(records.map(record=>[record.id,record]));synced.forEach(record=>{if(previousById.get(record.id)?.powerMetrics)record.powerMetrics=previousById.get(record.id).powerMetrics;});const syncedIds=new Set(synced.map(r=>r.id));records=[...records.filter(r=>!syncedIds.has(r.id)&&!String(r.id).startsWith('seed-')),...synced];save();
         const pending=sorted().filter(record=>record.stravaId&&!record.powerMetrics).slice(0,100);let analyzed=0;for(const record of pending){setStravaStatus(`최근 기록 파워 분석 중… ${analyzed+1}/${pending.length}`);try{await fetchActivityDetail(record);if(record.powerMetrics)analyzed++;}catch{}}
         save();setStravaStatus(`${synced.length}개 라이딩 동기화 · ${analyzed}개 파워 분석${pageLimitDetected?' · 중계 서버 첫 페이지까지만 제공됨':''}`);
@@ -360,7 +377,7 @@
     document.querySelector('#open-add').addEventListener('click',()=>openEditor());
     document.querySelector('#icon-picker').addEventListener('click',e=>{const button=e.target.closest('[data-icon]');if(button)renderIconPicker(button.dataset.icon);});
     document.querySelector('#cancel-add').addEventListener('click',()=>recordForm.close());
-    document.querySelector('#ride-form').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const data={id:editingId||`ride-${Date.now()}`,title:f.get('title').trim(),date:f.get('date'),distance:Number(f.get('distance')),duration:Number(f.get('duration')),elevation:Number(f.get('elevation'))||0,load:Number(f.get('load'))||0,note:f.get('note').trim(),icon:f.get('icon')||'sun'};if(editingId){records=records.map(r=>r.id===editingId?data:r);}else{records.push(data);}editingId=null;recordForm.close();save();});
+    document.querySelector('#ride-form').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const data={id:editingId||`ride-${Date.now()}`,title:f.get('title').trim(),date:f.get('date'),distance:Number(f.get('distance')),duration:Number(f.get('duration')),elevation:Number(f.get('elevation'))||0,load:Number(f.get('load'))||0,note:f.get('note').trim(),icon:f.get('icon')||'sun'};if(/(그란폰도|gran fondo|granfondo)/i.test(data.title))data.icon='medal';else if(/(강풍|센\s*바람|돌풍|windy|strong wind)/i.test(data.title))data.icon='wind';if(editingId){records=records.map(r=>r.id===editingId?data:r);}else{records.push(data);}editingId=null;recordForm.close();save();});
     document.querySelector('#edit-detail').addEventListener('click',()=>{const record=records.find(r=>r.id===editingId);if(record){detail.close();openEditor(record);}});
     document.querySelector('#open-goals').addEventListener('click',()=>{const form=document.querySelector('#goal-form');form.elements.weeklyDistance.value=goals.weeklyDistance;form.elements.weeklyLoad.value=goals.weeklyLoad;form.elements.monthlyDistance.value=goals.monthlyDistance;document.querySelector('#goals-form').showModal();});
     document.querySelector('#cancel-goals').addEventListener('click',()=>document.querySelector('#goals-form').close());
@@ -372,7 +389,7 @@
     document.querySelector('#toggle-strava-key').addEventListener('click',unlockStravaKey);
     document.querySelector('#connect-strava').addEventListener('click',()=>{if(!stravaSyncKey){setStravaStatus('동기화 키를 먼저 입력하고 저장해 주세요.');return;}location.href=`${stravaWorkerUrl}/auth/strava?key=${encodeURIComponent(stravaSyncKey)}`;});
     document.querySelector('#sync-strava').addEventListener('click',syncStrava);
-    const ftpInput=document.querySelector('#ftp-value');ftpInput.value=ftp;ftpInput.addEventListener('change',()=>{const next=Math.max(50,Math.min(600,Number(ftpInput.value)||201));if(next!==ftp){ftp=next;localStorage.setItem(ftpStorageKey,String(ftp));records.forEach(record=>delete record.powerMetrics);save();setStravaStatus(`FTP를 ${ftp}W로 저장했어요. 기록 동기화를 누르면 지표를 다시 계산합니다.`);}ftpInput.value=ftp;});
+    const ftpInput=document.querySelector('#ftp-value');ftpInput.value=ftp;function applyFtp(){const next=Math.max(50,Math.min(600,Number(ftpInput.value)||201));if(next!==ftp){ftp=next;localStorage.setItem(ftpStorageKey,String(ftp));records.forEach(record=>delete record.powerMetrics);save();setStravaStatus(`FTP를 ${ftp}W로 적용했어요. 기록 동기화를 누르면 지표를 다시 계산합니다.`);}else setStravaStatus(`현재 FTP ${ftp}W가 적용되어 있어요.`);ftpInput.value=ftp;}document.querySelector('#apply-ftp').addEventListener('click',applyFtp);ftpInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();applyFtp();}});
     if(stravaSyncKey)lockStravaKey();
     if(new URLSearchParams(location.search).get('strava')==='connected'){setStravaStatus('Strava 연결이 완료됐어요. 기록 동기화를 눌러 주세요.');history.replaceState({},'',location.pathname);}
     else if(stravaSyncKey)setStravaStatus('동기화 키가 이 기기에 저장되어 있어요.');
