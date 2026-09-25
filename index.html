@@ -105,7 +105,7 @@
     .detail-overview div { padding:10px 5px; border-radius:12px; background:#f2f7f3; text-align:center; }
     .detail-overview b { display:block; color:var(--deep); font-size:14px; }
     .detail-overview span { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
-    .activity-analysis { margin-top:14px; }
+    .activity-analysis { margin-top:7px; }
     .activity-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
     .activity-metric { padding:10px 7px; border-radius:12px; background:#f2f7f3; text-align:center; }
     .activity-metric b { display:block; color:var(--deep); font-size:14px; }
@@ -122,7 +122,7 @@
     .activity-zone-legend span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .activity-zone-legend time { color:var(--deep); font-weight:750; font-variant-numeric:tabular-nums; }
     .activity-insight { margin:13px 0; padding:11px 12px; border-radius:12px; background:#eef6f1; color:#315a49 !important; font-size:12px; line-height:1.5; }
-    .activity-note { margin:10px 0 14px; padding:10px 12px; border-radius:12px; background:#f6f8f6; color:#526158; font-size:11px; line-height:1.5; white-space:pre-wrap; }
+    .activity-note { margin:10px 0 14px; padding:10px 12px; border-radius:12px; background:#f2f7f3; color:#526158; font-size:11px; line-height:1.5; white-space:pre-wrap; }
     .activity-note::before { display:block; margin-bottom:3px; color:#819087; font-size:9px; font-weight:800; content:"MEMO"; }
     .stream-tabs { display:flex; gap:6px; overflow:auto; margin:12px 0 8px; }
     .stream-tabs button { width:auto; flex:none; display:flex; align-items:center; gap:5px; padding:7px 10px; border-radius:999px; background:#edf2ee; color:#526258; font-size:11px; }
@@ -241,7 +241,7 @@
     .strava-buttons .secondary { background:#315b4c; color:#e7f2ec; }
     .strava-buttons #connect-strava { grid-column:1 / -1; }
     .strava-status { margin:12px 1px 0 !important; color:#e0efe8 !important; font-size:12px !important; }
-    .coach-share-card { margin-top:24px; padding:18px; border:0; border-radius:18px; background:#f4f1fb; }
+    .coach-share-card { margin-top:24px; padding:18px; border:1px solid #cfc6e6; border-radius:18px; background:#f4f1fb; }
     .coach-share-card h2 { margin:0; color:#3f3567; font-size:18px; }
     .coach-share-card p { margin:6px 0 15px; color:#756c91; font-size:12px; line-height:1.5; }
     .coach-share-button { width:100%; padding:12px 14px; border:0; border-radius:13px; background:#65539a; color:#fff; font-size:13px; font-weight:800; }
@@ -401,12 +401,12 @@
         <label>훈련량<input name="load" type="number" min="0" step="1" placeholder="80"></label>
       </div>
       <div class="form-grid">
-        <label>평균 속도 (km/h)<input name="averageSpeedKph" type="number" min="0" step="0.1" placeholder="28.5"></label>
         <label>NP (W)<input name="normalizedPowerWatts" type="number" min="0" step="1" placeholder="170"></label>
+        <label>IF<input name="intensityFactor" type="number" min="0" step="0.01" placeholder="0.85"></label>
       </div>
       <div class="form-grid">
-        <label>IF<input name="intensityFactor" type="number" min="0" step="0.01" placeholder="0.85"></label>
         <label>TSS<input name="tss" type="number" min="0" step="1" placeholder="120"></label>
+        <label>평균 속도 (km/h)<input name="averageSpeedKph" type="number" min="0" step="0.1" placeholder="28.5"></label>
       </div>
       <div class="form-grid">
         <label>평균 파워 (W)<input name="averagePowerWatts" type="number" min="0" step="1" placeholder="150"></label>
@@ -530,7 +530,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     const labelFor=record=>{const date=parseDate(record.date);return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;};
     function renderDetailOverview(record){document.querySelector('#detail-overview').innerHTML=`<div><b>${record.distance.toFixed(1)}km</b><span>Distance</span></div><div><b>${formatDuration(record.duration)}</b><span>Moving Time</span></div><div><b>${record.elevation.toLocaleString()}m</b><span>Elevation</span></div>`;}
     const displayAverageSpeed=record=>{const stored=Number(record.averageSpeedKph);return stored>0?stored:record.distance>0&&record.duration>0?record.distance/(record.duration/60):null;};
-    function detailMetrics(record){const power=record.powerMetrics;return [['평균 속도',displayAverageSpeed(record)?`${displayAverageSpeed(record).toFixed(1)}km/h`:'—'],['NP',power?.np||record.normalizedPowerWatts?`${Math.round(power?.np||record.normalizedPowerWatts)}W`:'—'],['IF',power?.if||record.intensityFactor?Number(power?.if||record.intensityFactor).toFixed(2):'—'],['TSS',power?.tss??record.tss??'—'],['평균 파워',record.averagePowerWatts?`${Math.round(record.averagePowerWatts)}W`:'—'],['Strava 가중 파워',record.stravaWeightedAveragePowerWatts?`${Math.round(record.stravaWeightedAveragePowerWatts)}W`:'—'],['평균 심박',record.averageHeartRateBpm?`${Math.round(record.averageHeartRateBpm)}bpm`:'—'],['평균 케이던스',record.averageCadenceRpm?`${Math.round(record.averageCadenceRpm)}rpm`:'—']];}
+    function detailMetrics(record){const power=record.powerMetrics;return [['NP',power?.np||record.normalizedPowerWatts?`${Math.round(power?.np||record.normalizedPowerWatts)}W`:'—'],['IF',power?.if||record.intensityFactor?Number(power?.if||record.intensityFactor).toFixed(2):'—'],['TSS',power?.tss??record.tss??'—'],['평균 속도',displayAverageSpeed(record)?`${displayAverageSpeed(record).toFixed(1)}km/h`:'—'],['평균 파워',record.averagePowerWatts?`${Math.round(record.averagePowerWatts)}W`:'—'],['Strava 가중 파워',record.stravaWeightedAveragePowerWatts?`${Math.round(record.stravaWeightedAveragePowerWatts)}W`:'—'],['평균 심박',record.averageHeartRateBpm?`${Math.round(record.averageHeartRateBpm)}bpm`:'—'],['평균 케이던스',record.averageCadenceRpm?`${Math.round(record.averageCadenceRpm)}rpm`:'—']];}
     function renderDetailNote(record){const note=document.querySelector('#activity-note');note.textContent=record.note||'';note.hidden=!record.note;}
     function renderStoredAnalysis(record){document.querySelector('#activity-metrics').innerHTML=detailMetrics(record).map(([label,value])=>`<div class="activity-metric"><b>${value}</b><span>${label}</span></div>`).join('');document.querySelector('#activity-insight').textContent=record.powerMetrics?`FTP ${record.powerMetrics.ftp}W 기준 · 저장된 파워 지표입니다.`:'직접 입력한 라이딩 기록입니다.';renderDetailNote(record);document.querySelector('#activity-zone-charts').innerHTML='';document.querySelector('#stream-tabs').innerHTML='';document.querySelector('#stream-chart').hidden=true;document.querySelector('#activity-analysis').hidden=false;}
     const showDetail=id=>{const r=records.find(item=>item.id===id);if(!r)return;editingId=id;document.querySelector('#detail-title').textContent=r.title;document.querySelector('#detail-text').textContent=`${formatFullDate(parseDate(r.date))} · ${isIndoorRide(r)?'실내':'실외'}`;renderDetailOverview(r);renderStoredAnalysis(r);document.querySelector('#edit-detail').hidden=false;detail.showModal();if(r.stravaId)loadActivityAnalysis(r);};
