@@ -13,7 +13,8 @@
   <style>
     :root { color-scheme: light; --ink:#14221c; --muted:#718078; --paper:#f5f7f4; --green:#169a6c; --deep:#173c31; --line:#e5eae6; }
     * { box-sizing:border-box; }
-    body { margin:0; overflow-x:hidden; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
+    html { scrollbar-gutter:stable; }
+    body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
     button { font:inherit; }
     .app { max-width:580px; min-height:100vh; margin:auto; padding:calc(18px + env(safe-area-inset-top)) 20px calc(92px + env(safe-area-inset-bottom)); }
     .top { display:flex; align-items:center; justify-content:space-between; }
@@ -31,7 +32,7 @@
     .bar span { display:block; width:59%; height:100%; border-radius:inherit; background:#6fe5b0; transition:width .25s ease; }
     .goal-note { margin:14px 0 0; color:#e0efe8; font-size:14px; line-height:1.45; }
     .player-snapshot { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:24px; }
-    .player-snapshot-item { min-width:0; display:flex; align-items:center; gap:7px; padding:10px 8px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .player-snapshot-item { min-width:0; display:flex; align-items:center; gap:7px; padding:10px 8px; border:0; border-radius:18px; background:#fff; }
     .player-snapshot-icon { width:27px; height:27px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); }
     .player-snapshot-icon svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .player-snapshot-copy { min-width:0; }
@@ -84,16 +85,16 @@
     .ride-type { display:inline-flex; align-items:center; margin-left:4px; color:#45675a; font-weight:750; }
     .scope-toggle { display:flex; gap:7px; margin:0 4px 10px; }
     .scope-toggle button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-size:11px; font-weight:750; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
-    .scope-toggle button.active { border-color:#4e7766; background:#eaf4ee; color:#315b4c; }
+    .scope-toggle button.active { border-color:var(--deep); background:var(--deep); color:#fff; }
     .chevron { color:#aab3ad; font-size:21px; }
     .bottom { position:fixed; z-index:50; right:0; bottom:0; left:0; width:100%; display:flex; justify-content:center; padding:8px max(20px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left)); background:rgba(255,255,255,.92); border-top:1px solid var(--line); backdrop-filter:blur(12px); }
     .nav { width:100%; max-width:540px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
     [hidden] { display:none !important; }
-    .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; background:transparent; color:var(--muted); font-size:11px; }
+    .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; outline:0; background:transparent; color:var(--muted); font-size:11px; }
     .nav button.active { color:var(--green); font-weight:800; }
     .nav b { display:grid; width:22px; height:22px; place-items:center; font-size:20px; font-weight:500; }
     .nav b svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
-    dialog { position:relative; width:min(520px,calc(100% - 24px)); max-height:90vh; overflow-x:hidden; overflow-y:auto; border:0; border-radius:22px; padding:26px 22px 22px; box-shadow:0 18px 50px #0004; }
+    dialog { position:fixed; inset:0; width:min(520px,calc(100% - 24px)); max-height:90vh; margin:auto; overflow-x:hidden; overflow-y:auto; border:0; border-radius:22px; padding:26px 22px 22px; box-shadow:0 18px 50px #0004; }
     dialog::backdrop { background:#14221c88; }
     dialog h3 { margin:0 0 8px; }
     dialog p { color:var(--muted); line-height:1.55; }
@@ -133,12 +134,12 @@
     .page-header h1 { font-size:27px; }
     .page-actions { display:flex; gap:7px; }
     .add-button { padding:10px 12px; border:0; border-radius:12px; background:var(--deep); color:white; font-size:12px; font-weight:750; white-space:nowrap; }
-    .find-button { padding:10px 11px; border:1px solid #b9c8bf; border-radius:12px; background:#fff; color:var(--deep); font-size:12px; font-weight:750; white-space:nowrap; }
+    .find-button { padding:10px 11px; border:0; border-radius:12px; background:#edf2ee; color:var(--deep); font-size:12px; font-weight:750; white-space:nowrap; }
     .record-list { width:100%; min-width:0; display:grid; gap:10px; margin-top:18px; overflow:hidden; }
     .ride-totals { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; padding-bottom:18px; border-bottom:1px solid var(--line); }
-    .ride-summary-toggle { display:flex; gap:7px; margin-top:10px; }
+    .ride-summary-toggle { display:flex; gap:7px; margin:12px 0; }
     .ride-summary-toggle button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-size:11px; font-weight:750; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
-    .ride-summary-toggle button.active { border-color:#4e7766; background:#eaf4ee; color:#315b4c; }
+    .ride-summary-toggle button.active { border-color:var(--deep); background:var(--deep); color:#fff; }
     .ride-total { min-width:0; padding:10px 4px; border-radius:18px; background:#fff; text-align:center; }
     .ride-total b { display:block; overflow:hidden; color:var(--deep); font-size:13px; line-height:1.2; text-overflow:ellipsis; white-space:nowrap; }
     .ride-total span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
@@ -189,6 +190,7 @@
     .icon-choice svg, .ride-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.75; }
     .icon-choice svg.symbol-bike, .ride-icon svg.symbol-bike { stroke-width:2.35; }
     .dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+    .dialog-actions:has(> [hidden]) { grid-template-columns:1fr; }
     .dialog-actions .secondary { background:#edf2ee; color:#536158; }
     #ride-search-form .dialog-actions { grid-template-columns:repeat(3,1fr); }
     .calendar-head { display:grid; grid-template-columns:40px 1fr 40px; align-items:center; margin:8px 0; }
