@@ -214,7 +214,23 @@
     .coach-share-card h2 { margin:0; color:#3f3567; font-size:18px; }
     .coach-share-card p { margin:6px 0 15px; color:#756c91; font-size:12px; line-height:1.5; }
     .coach-share-button { width:100%; padding:12px 14px; border:0; border-radius:13px; background:#65539a; color:#fff; font-size:13px; font-weight:800; }
-    @media (max-width:380px) { .stats { grid-template-columns:repeat(2,1fr); } .app { padding-right:14px; padding-left:14px; } .ride { gap:10px; padding:11px; border-radius:15px; } .ride-icon { width:38px; height:38px; } .ride-name { font-size:14px; } .ride-meta { font-size:11px; } }
+    @media (max-width:430px) {
+      .stats { grid-template-columns:repeat(2,1fr); }
+      .app { padding-right:14px; padding-left:14px; }
+      .player-snapshot { gap:5px; }
+      .player-snapshot-item { align-items:start; gap:5px; padding:9px 5px; }
+      .player-snapshot-icon { width:22px; height:22px; }
+      .player-snapshot-icon svg { width:13px; height:13px; }
+      .player-snapshot-copy b { overflow:visible; font-size:11px; line-height:1.25; text-overflow:clip; white-space:normal; word-break:keep-all; }
+      .player-snapshot-copy span { font-size:8px; line-height:1.25; white-space:normal; word-break:keep-all; }
+      .ride-totals { grid-template-columns:repeat(2,1fr); gap:8px; }
+      .ride-total { padding:12px 6px; }
+      .ride-total b { overflow:visible; font-size:14px; text-overflow:clip; white-space:normal; word-break:keep-all; }
+      .ride { gap:10px; padding:11px; border-radius:15px; }
+      .ride-icon { width:38px; height:38px; }
+      .ride-name { font-size:14px; }
+      .ride-meta { font-size:11px; }
+    }
   </style>
 </head>
 <body>
