@@ -19,6 +19,7 @@
     .app { max-width:580px; min-height:100vh; margin:auto; padding:calc(18px + env(safe-area-inset-top)) 20px calc(92px + env(safe-area-inset-bottom)); }
     .top { display:flex; align-items:center; justify-content:space-between; }
     h1 { margin:0; font-size:31px; letter-spacing:-1.2px; }
+    .top h1 { font-size:27px; }
     .date { margin:4px 0 0; color:var(--muted); font-size:14px; }
     .avatar { width:46px; height:46px; display:grid; place-items:center; border:0; border-radius:50%; background:#dff3e9; color:var(--green); }
     .avatar svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
@@ -396,24 +397,26 @@
         <label>Distance (km)<input name="distance" type="number" min="0" step="0.1" placeholder="25.4" required></label>
         <label>Moving Time (분)<input name="duration" type="number" min="1" step="1" placeholder="90" required></label>
       </div>
-      <label>Elevation (m)<input name="elevation" type="number" min="0" step="1" placeholder="250"></label>
       <div class="form-grid">
+        <label>Elevation (m)<input name="elevation" type="number" min="0" step="1" placeholder="250"></label>
         <label>NP (W)<input name="normalizedPowerWatts" type="number" min="0" step="1" placeholder="170"></label>
+      </div>
+      <div class="form-grid">
         <label>IF<input name="intensityFactor" type="number" min="0" step="0.01" placeholder="0.85"></label>
-      </div>
-      <div class="form-grid">
         <label>TSS<input name="tss" type="number" min="0" step="1" placeholder="120"></label>
+      </div>
+      <div class="form-grid">
         <label>평균 속도 (km/h)<input name="averageSpeedKph" type="number" min="0" step="0.1" placeholder="28.5"></label>
-      </div>
-      <div class="form-grid">
         <label>평균 파워 (W)<input name="averagePowerWatts" type="number" min="0" step="1" placeholder="150"></label>
-        <label>Strava 가중 파워 (W)<input name="stravaWeightedAveragePowerWatts" type="number" min="0" step="1" placeholder="165"></label>
       </div>
       <div class="form-grid">
+        <label>Strava 가중 파워 (W)<input name="stravaWeightedAveragePowerWatts" type="number" min="0" step="1" placeholder="165"></label>
         <label>평균 심박 (bpm)<input name="averageHeartRateBpm" type="number" min="0" step="1" placeholder="135"></label>
-        <label>평균 케이던스 (rpm)<input name="averageCadenceRpm" type="number" min="0" step="1" placeholder="80"></label>
       </div>
-      <label>상대적 노력도<input name="load" type="number" min="0" step="1" placeholder="80"></label>
+      <div class="form-grid">
+        <label>평균 케이던스 (rpm)<input name="averageCadenceRpm" type="number" min="0" step="1" placeholder="80"></label>
+        <label>상대적 노력도<input name="load" type="number" min="0" step="1" placeholder="80"></label>
+      </div>
       <label>메모 <textarea name="note" placeholder="오늘 컨디션이나 코스 메모"></textarea></label>
       <div class="dialog-actions"><button class="secondary" type="button" id="cancel-add">취소</button><button type="submit">저장</button></div>
     </form>
