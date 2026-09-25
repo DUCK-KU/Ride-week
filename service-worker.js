@@ -1,5 +1,5 @@
-const cacheName = 'ride-week-v34';
-const files = ['./', './index.html', './manifest.webmanifest', './icon.svg', './group-ride.png'];
+const cacheName = 'ride-week-v35';
+const files = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 self.addEventListener('install', event => event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(files)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(names => Promise.all(names.filter(name => name.startsWith('ride-week-') && name !== cacheName).map(name => caches.delete(name)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', event => {

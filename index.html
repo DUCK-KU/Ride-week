@@ -155,8 +155,7 @@
     .icon-choice { display:grid; place-items:center; min-height:48px; border:1px solid var(--line); border-radius:12px; background:white; color:#63736a; }
     .icon-choice.selected { border-color:var(--green); background:#e5f6ed; color:var(--green); }
     .icon-choice svg, .ride-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.75; }
-    .icon-choice img, .ride-icon img { width:30px; height:24px; object-fit:contain; mix-blend-mode:multiply; }
-    .icon-choice svg.symbol-bike, .ride-icon svg.symbol-bike, .icon-choice svg.symbol-group, .ride-icon svg.symbol-group { stroke-width:2.35; }
+    .icon-choice svg.symbol-bike, .ride-icon svg.symbol-bike { stroke-width:2.35; }
     .dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
     .dialog-actions .secondary { background:#edf2ee; color:#536158; }
     #ride-search-form .dialog-actions { grid-template-columns:repeat(3,1fr); }
@@ -344,9 +343,9 @@
       medal:'<path d="M8 3h8l-1.5 7h-5L8 3Z"/><circle cx="12" cy="16" r="5"/><path d="m12 13 1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2-1.5-1.4 2-.3 1-2Z"/>',
       indoor:'<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20M9 19h6"/>',
       bike:'<circle cx="5" cy="17" r="4"/><circle cx="19" cy="17" r="4"/><path d="m5 17 4-9 6 9H5m4-9h6m-6 0 4 9m2-9-2 9m2-9 1-3h3m-9-6H7L5.5 5"/>',
-      group:'<circle cx="12" cy="7" r="4"/><circle cx="4.7" cy="9" r="2.7"/><circle cx="19.3" cy="9" r="2.7"/><path d="M4 20v-2.2c0-3.5 3.1-6.3 8-6.3s8 2.8 8 6.3V20M1.5 18v-1.3c0-2.4 1.6-4.5 4.4-5.3M22.5 18v-1.3c0-2.4-1.6-4.5-4.4-5.3"/>'
+      group:'<circle cx="7.2" cy="7" r="3.3"/><circle cx="16.8" cy="7" r="3.3"/><path d="M1.8 20v-1.2c0-4.4 2.4-7.7 5.4-7.7s5.4 3.3 5.4 7.7V20M11.4 18.8c0-4.4 2.4-7.7 5.4-7.7s5.4 3.3 5.4 7.7V20"/>'
     };
-    const iconSvg=name=>{const safeName=iconNames[name]?name:'sun';if(safeName==='group')return '<img src="./group-ride.png" alt="" aria-hidden="true">';return `<svg class="symbol-${safeName}" viewBox="0 0 24 24" aria-hidden="true">${iconPaths[safeName]}</svg>`;};
+    const iconSvg=name=>{const safeName=iconNames[name]?name:'sun';return `<svg class="symbol-${safeName}" viewBox="0 0 24 24" aria-hidden="true">${iconPaths[safeName]}</svg>`;};
     const today=new Date();
     const iso=date=>date.toISOString().slice(0,10);
     const dayOffset=days=>{const d=new Date(today);d.setDate(d.getDate()-days);return iso(d);};
