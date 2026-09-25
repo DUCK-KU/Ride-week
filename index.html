@@ -17,14 +17,14 @@
     body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
     button { font:inherit; }
     .app { max-width:580px; min-height:100vh; margin:auto; padding:calc(18px + env(safe-area-inset-top)) 20px calc(92px + env(safe-area-inset-bottom)); }
-    .top { display:flex; align-items:center; justify-content:space-between; }
+    .top { display:flex; align-items:center; justify-content:space-between; min-height:52px; }
     h1 { margin:0; font-size:31px; letter-spacing:-1.2px; }
     .top h1 { font-size:27px; }
     .date { margin:4px 0 0; color:var(--muted); font-size:14px; }
     .avatar { width:46px; height:46px; display:grid; place-items:center; border:0; border-radius:50%; background:#dff3e9; color:var(--green); }
     .avatar svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
-    .period { display:flex; gap:8px; margin:24px 0 14px; }
-    .period button { padding:8px 13px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-weight:700; font-size:13px; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
+    .period { display:flex; gap:7px; margin:12px 0; }
+    .period button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-weight:750; font-size:11px; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
     .period button.active { border-color:var(--deep); background:var(--deep); color:white; }
     .goal { padding:21px; border-radius:25px; background:var(--deep); color:white; }
     .goal-label { color:#c5ddd3; font-size:14px; font-weight:700; }
@@ -133,6 +133,7 @@
     .stream-label { fill:#819087; font-size:9px; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif; }
     .page[hidden] { display:none; }
     .page-header { display:flex; align-items:center; justify-content:space-between; }
+    #rides-page > .page-header, #settings-page > .page-header { min-height:52px; }
     .page-header > div:first-child { min-width:0; }
     .page-header h1 { font-size:27px; }
     .page-actions { display:flex; gap:7px; }
@@ -227,7 +228,7 @@
     .settings-action .action-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
     .settings-action strong { display:block; font-size:15px; }
     .settings-action span { display:block; margin-top:3px; color:var(--muted); font-size:12px; }
-    .strava-card { margin-top:24px; padding:18px; border-radius:18px; background:var(--deep); color:white; }
+    .strava-card { margin-top:12px; padding:18px; border-radius:18px; background:var(--deep); color:white; }
     .strava-card h2 { margin:0; font-size:18px; }
     .strava-card p { margin:6px 0 15px; color:#c5ddd3; font-size:13px; line-height:1.45; }
     .strava-key { display:flex; gap:8px; }
