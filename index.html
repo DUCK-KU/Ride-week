@@ -209,6 +209,10 @@
     .strava-buttons button { min-height:44px; background:#6fe5b0; color:#123b2d; }
     .strava-buttons .secondary { background:#315b4c; color:#e7f2ec; }
     .strava-status { margin:12px 1px 0 !important; color:#e0efe8 !important; font-size:12px !important; }
+    .coach-share-card { margin-top:24px; padding:18px; border:1px solid #dcd7ef; border-radius:20px; background:#f4f1fb; }
+    .coach-share-card h2 { margin:0; color:#3f3567; font-size:18px; }
+    .coach-share-card p { margin:6px 0 15px; color:#756c91; font-size:12px; line-height:1.5; }
+    .coach-share-button { width:100%; padding:12px 14px; border:0; border-radius:13px; background:#65539a; color:#fff; font-size:13px; font-weight:800; }
     @media (max-width:380px) { .stats { grid-template-columns:repeat(2,1fr); } .app { padding-right:14px; padding-left:14px; } .ride { gap:10px; padding:11px; border-radius:15px; } .ride-icon { width:38px; height:38px; } .ride-name { font-size:14px; } .ride-meta { font-size:11px; } }
   </style>
 </head>
@@ -275,6 +279,11 @@
       <div class="strava-buttons"><button class="secondary" id="connect-strava" type="button">Strava 연결</button><button id="sync-strava" type="button">기록 동기화</button></div>
       <p class="strava-status" id="strava-status">동기화 키를 먼저 저장해 주세요.</p>
     </section>
+    <section class="coach-share-card" aria-label="코치에게 공유하기">
+      <h2>코치에게 공유하기</h2>
+      <p>최근 2주 훈련과 6주 추세를 개인정보 없이 JSON 파일로 정리합니다.</p>
+      <button class="coach-share-button" type="button" id="export-coach-data">코치용 데이터 다운로드</button>
+    </section>
     <section id="settings-goals">
     <header class="page-header">
       <div><h2>목표 설정</h2><p class="date">꾸준한 라이딩을 위한 나의 기준</p></div>
@@ -286,9 +295,8 @@
       <div class="goal-setting"><div class="goal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h2M11 14h2M15 14h2M7 18h2M11 18h2"/></svg></div><div><strong>연간 거리</strong><span>이번 해 목표</span></div><b id="annual-distance-goal">5,000 km</b></div>
     </section>
   </section>
-    <section class="settings-actions" id="settings-backup" aria-label="데이터 관리">
-      <header class="page-header"><div><h2>데이터 관리</h2><p class="date">코칭 공유와 기록 백업을 관리하세요</p></div></header>
-      <button class="settings-action" type="button" id="export-coach-data"><div class="action-icon">↗</div><div><strong>코치에게 공유</strong><span>최근 훈련 데이터를 분석용 JSON으로 다운로드</span></div></button>
+    <section class="settings-actions" id="settings-backup" aria-label="기록 백업">
+      <header class="page-header"><div><h2>기록 백업</h2><p class="date">내 기록을 안전하게 보관하세요</p></div></header>
       <button class="settings-action" type="button" id="export-data"><div class="action-icon">↓</div><div><strong>기록 백업 내보내기</strong><span>라이딩 기록과 목표를 파일로 저장</span></div></button>
       <button class="settings-action" type="button" id="import-data"><div class="action-icon">↑</div><div><strong>기록 백업 가져오기</strong><span>저장한 백업 파일로 기록 복원</span></div></button>
       <input id="import-file" type="file" accept="application/json" hidden>
