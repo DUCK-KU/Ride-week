@@ -720,7 +720,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     if(new URLSearchParams(location.search).get('strava')==='connected'){setStravaStatus('Strava 연결이 완료됐어요. 기록 동기화를 눌러 주세요.');history.replaceState({},'',location.pathname);}
     else if(stravaSyncKey)setStravaStatus('동기화 키가 이 기기에 저장되어 있어요.');
     if(stravaSyncKey)syncCloudSettings();
-    const lastAutomaticSync=Number(localStorage.getItem(stravaLastSyncStorageKey))||0;if(stravaSyncKey&&Date.now()-lastAutomaticSync>6*60*60*1000)setTimeout(()=>syncStrava({automatic:true}),1200);
+    const lastAutomaticSync=Number(localStorage.getItem(stravaLastSyncStorageKey))||0;const hasUnhydratedRuns=runningRecords().some(record=>record.stravaId&&record.stravaDetailVersion!==1);if(stravaSyncKey&&(hasUnhydratedRuns||Date.now()-lastAutomaticSync>6*60*60*1000))setTimeout(()=>syncStrava({automatic:true}),1200);
     let homeSport='ride';
     const homeItems=()=>homeSport==='run'?runningRecords():cyclingRecords();
     const compactClock=minutes=>{const seconds=Math.round((Number(minutes)||0)*60);return `${Math.floor(seconds/3600)}:${String(Math.floor(seconds%3600/60)).padStart(2,'0')}`;};
