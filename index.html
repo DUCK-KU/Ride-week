@@ -666,7 +666,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     document.querySelector('#run-record-list').addEventListener('click',e=>{const del=e.target.closest('[data-delete-id]');if(del){records=records.filter(r=>r.id!==del.dataset.deleteId);save();return;}const b=e.target.closest('[data-run-id]');if(b)showDetail(b.dataset.runId);});
     document.querySelector('#close-detail').addEventListener('click',()=>detail.close());
     document.querySelectorAll('[data-dialog-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
-    document.querySelector('#all-rides').addEventListener('click',()=>showPage('rides'));
+    document.querySelector('#all-rides')?.addEventListener('click',()=>showPage('rides'));
     document.querySelector('#open-ride-search').addEventListener('click',()=>{calendarDraft={...rideDateFilter};const base=calendarDraft.start?parseDate(calendarDraft.start):today;calendarMonth=new Date(base.getFullYear(),base.getMonth(),1);renderRideCalendar();document.querySelector('#ride-search-dialog').showModal();});
     document.querySelector('#open-run-search').addEventListener('click',()=>{calendarDraft={...rideDateFilter};const base=calendarDraft.start?parseDate(calendarDraft.start):today;calendarMonth=new Date(base.getFullYear(),base.getMonth(),1);renderRideCalendar();document.querySelector('#ride-search-dialog').showModal();});
     document.querySelector('#cancel-ride-search').addEventListener('click',()=>document.querySelector('#ride-search-dialog').close());
