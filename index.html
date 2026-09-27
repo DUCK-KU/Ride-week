@@ -530,7 +530,7 @@
     let ftp=Number(playerData.ftp)||201;
     function normalizedFtpHistory(history=playerData.ftpHistory,currentFtp=ftp){const entries=(Array.isArray(history)?history:[]).map(item=>({effectiveFrom:String(item.effectiveFrom||''),watts:Number(item.watts)})).filter(item=>/^\d{4}-\d{2}-\d{2}$/.test(item.effectiveFrom)&&item.watts>=50&&item.watts<=600).sort((a,b)=>a.effectiveFrom.localeCompare(b.effectiveFrom));if(!entries.length)entries.push({effectiveFrom:'0000-01-01',watts:Number(currentFtp)||201});return entries.filter((item,index)=>index===entries.length-1||item.effectiveFrom!==entries[index+1].effectiveFrom);}
     playerData.ftpHistory=normalizedFtpHistory(playerData.ftpHistory,ftp);
-    const ftpForDate=date=>{const key=String(date||calendarKey(today));return normalizedFtpHistory().filter(item=>item.effectiveFrom<=key).at(-1)?.watts||ftp;};
+    const ftpForDate=date=>{const key=String(date||calendarKey(today));const applicable=normalizedFtpHistory().filter(item=>item.effectiveFrom<=key);return applicable.length?applicable[applicable.length-1].watts:ftp;};
     let chartData=null;
     let visibleChartMetrics=new Set(['distance','elevation','duration','load','tss']);
     let activeTrendScope='all';
