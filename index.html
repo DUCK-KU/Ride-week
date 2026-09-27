@@ -99,7 +99,7 @@
     .nav button.active { color:var(--green); font-weight:800; }
     .nav b { display:grid; width:22px; height:22px; place-items:center; font-size:20px; font-weight:500; }
     .nav b svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
-    dialog { position:fixed; inset:0; width:min(520px,calc(100% - 24px)); max-height:90vh; margin:auto; overflow-x:hidden; overflow-y:auto; border:0; border-radius:22px; padding:26px 22px 22px; box-shadow:0 18px 50px #0004; }
+    dialog { position:fixed; inset:0; width:min(520px,calc(100% - 24px)); max-height:90vh; margin:auto; overflow-x:hidden; overflow-y:auto; scrollbar-gutter:stable; overscroll-behavior:contain; border:0; border-radius:22px; clip-path:inset(0 round 22px); padding:26px 22px 22px; box-shadow:0 18px 50px #0004; }
     dialog::backdrop { background:#14221c88; }
     dialog h3 { margin:0 0 8px; }
     dialog p { color:var(--muted); line-height:1.55; }
@@ -287,6 +287,12 @@
       .player-snapshot-copy b { overflow:visible; font-size:11px; line-height:1.25; text-overflow:clip; white-space:nowrap; word-break:keep-all; }
       .player-snapshot-copy span { font-size:8px; line-height:1.25; white-space:nowrap; word-break:keep-all; }
       .running-prs { gap:5px; }
+      .goal-setting { display:grid; grid-template-columns:42px minmax(0,1fr); gap:8px 12px; align-items:center; }
+      .goal-setting > div:nth-child(2) { min-width:0; }
+      .goal-setting strong, .goal-setting span { white-space:nowrap; }
+      .goal-setting span { overflow:hidden; font-size:11px; text-overflow:ellipsis; }
+      .goal-setting b { grid-column:2; margin:0; font-size:15px; line-height:1.2; white-space:nowrap; }
+      dialog { width:calc(100% - 16px); max-height:calc(100dvh - 16px); padding-right:18px; padding-left:18px; }
       .ride-totals { grid-template-columns:repeat(2,1fr); gap:8px; }
       .ride-total { padding:12px 6px; }
       .ride-total b { overflow:visible; font-size:14px; text-overflow:clip; white-space:normal; word-break:keep-all; }
@@ -762,6 +768,8 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     const trendZonePalette={distance:'#244d94',elevation:'#16a2c8',duration:'#78cdb8',load:'#f4a261',tss:'#ef233c'};
     const paletteRenderChart=renderChart;
     renderChart=()=>{paletteRenderChart();const chart=document.querySelector('#weekly-chart');const replacements={'#58a8c9':trendZonePalette.distance,'#d6a910':trendZonePalette.elevation,'#62a84f':trendZonePalette.duration,'#cf6b68':trendZonePalette.load,'#8b67b3':trendZonePalette.tss};chart.innerHTML=Object.entries(replacements).reduce((html,[from,to])=>html.replaceAll(from,to),chart.innerHTML);document.querySelectorAll('[data-chart-metric]').forEach(button=>button.style.color=trendZonePalette[button.dataset.chartMetric]);};
+    const periodAwareColoredChart=renderChart;
+    renderChart=()=>{if(homeSport==='ride'){periodAwareColoredChart();return;}let buckets,periodLabel;if(activePeriod==='week'){const currentStart=startWeek(today);buckets=Array.from({length:8},(_,i)=>{const start=addDays(currentStart,(i-7)*7);return {start,end:addDays(start,7),label:i===7?'이번주':`${7-i}주전`};});periodLabel='8주';}else if(activePeriod==='month'){buckets=Array.from({length:12},(_,i)=>{const start=new Date(today.getFullYear(),today.getMonth()+i-11,1);return {start,end:new Date(start.getFullYear(),start.getMonth()+1,1),label:`${String(start.getFullYear()).slice(2)}.${String(start.getMonth()+1).padStart(2,'0')}`};});periodLabel='12개월';}else{buckets=Array.from({length:5},(_,i)=>{const start=new Date(today.getFullYear()+i-4,0,1);return {start,end:new Date(start.getFullYear()+1,0,1),label:String(start.getFullYear())};});periodLabel='5년';}document.querySelectorAll('[data-chart-metric="tss"]').forEach(button=>button.classList.add('home-sport-hidden'));const x=index=>38+index*282/Math.max(buckets.length-1,1),top=18,bottom=130;const grid=[0,.5,1].map(value=>`<line x1="34" y1="${bottom-value*(bottom-top)}" x2="326" y2="${bottom-value*(bottom-top)}" stroke="#e8eee9"/>`).join('');const paths=Object.entries(trendZonePalette).filter(([key])=>key!=='tss'&&visibleChartMetrics.has(key)).map(([key,color])=>{const values=buckets.map(({start,end})=>total(runningRecords().filter(record=>{const date=parseDate(record.date);return date>=start&&date<end&&(activeTrendScope==='all'||(isIndoorRide(record)?'indoor':'outdoor')===activeTrendScope);})) [key]);const maximum=Math.max(...values,1);return `<polyline points="${values.map((value,index)=>`${x(index)},${bottom-value/maximum*(bottom-top)}`).join(' ')}" fill="none" stroke="${color}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/>${values.map((value,index)=>`<circle cx="${x(index)}" cy="${bottom-value/maximum*(bottom-top)}" r="1.7" fill="${color}"/>`).join('')}`;}).join('');document.querySelector('#weekly-chart').innerHTML=`${grid}${paths}${buckets.map((bucket,index)=>`<text x="${x(index)}" y="151" text-anchor="middle" class="axis-label">${bucket.label}</text>`).join('')}`;document.querySelector('#trend-heading').textContent=activePeriod==='week'?'주간 추이':activePeriod==='month'?'월간 추이':'연간 추이';document.querySelector('#chart-unit').textContent=`러닝 · 각 지표의 ${periodLabel} 최고값 대비`;document.querySelectorAll('[data-chart-metric]').forEach(button=>{button.style.color=trendZonePalette[button.dataset.chartMetric];const active=visibleChartMetrics.has(button.dataset.chartMetric);button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});};
     const runsNeedRawStreamRefresh=runningRecords().some(record=>record.stravaId&&record.stravaDetailVersion!==4);
     if(runsNeedRawStreamRefresh){records=records.map(record=>isRun(record)&&record.stravaId&&record.stravaDetailVersion!==4?{...record,stravaDetailVersion:0}:record);localStorage.setItem(storageKey,JSON.stringify(records));if(stravaSyncKey)setTimeout(()=>syncStrava({automatic:true}),1800);}
     renderIconPicker();renderAll(); if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js');
