@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#173c31">
+  <meta name="theme-color" content="#1d1d1f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ride Week">
@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon.svg">
   <title>Ride Week</title>
   <style>
-    :root { color-scheme: light; --ink:#14221c; --muted:#718078; --paper:#f5f7f4; --green:#169a6c; --deep:#173c31; --line:#e5eae6; }
+    :root { color-scheme: light; --ink:#1d1d1f; --muted:#7b7f86; --paper:#f4f5f7; --green:#0a84ff; --deep:#1d1d1f; --line:#e2e4e8; --soft:#eef0f3; --blue-soft:#e8f2ff; --success:#16845b; }
     * { box-sizing:border-box; }
     html { scrollbar-gutter:stable; }
     body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
@@ -28,11 +28,11 @@
     .period button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-weight:750; font-size:11px; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
     .period button.active { border-color:var(--deep); background:var(--deep); color:white; }
     .goal { padding:21px; border-radius:25px; background:var(--deep); color:white; }
-    .goal-label { color:#c5ddd3; font-size:14px; font-weight:700; }
+    .goal-label { color:#d7d9de; font-size:14px; font-weight:700; }
     .goal-value { margin:9px 0 15px; font-size:20px; font-weight:800; letter-spacing:-.7px; white-space:nowrap; }
-    .bar { height:10px; overflow:hidden; border-radius:999px; background:#3c6354; }
-    .bar span { display:block; width:59%; height:100%; border-radius:inherit; background:#6fe5b0; transition:width .25s ease; }
-    .goal-note { margin:14px 0 0; color:#e0efe8; font-size:14px; line-height:1.45; }
+    .bar { height:10px; overflow:hidden; border-radius:999px; background:#4a4a4f; }
+    .bar span { display:block; width:59%; height:100%; border-radius:inherit; background:#0a84ff; transition:width .25s ease; }
+    .goal-note { margin:14px 0 0; color:#e1e3e7; font-size:14px; line-height:1.45; }
     .player-snapshot { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:14px; }
     .player-snapshot-item { min-width:0; display:flex; align-items:center; gap:7px; padding:10px 8px; border:0; border-radius:18px; background:#fff; }
     .player-snapshot-icon { width:27px; height:27px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); }
@@ -248,19 +248,19 @@
     .settings-action span { display:block; margin-top:3px; color:var(--muted); font-size:12px; }
     .strava-card { margin-top:12px; padding:18px; border-radius:18px; background:var(--deep); color:white; }
     .strava-card h2 { margin:0; font-size:18px; }
-    .strava-card p { margin:6px 0 15px; color:#c5ddd3; font-size:13px; line-height:1.45; }
+    .strava-card p { margin:6px 0 15px; color:#d7d9de; font-size:13px; line-height:1.45; }
     .strava-key { display:flex; gap:8px; }
-    .strava-key input { min-width:0; flex:1; padding:11px 12px; border:1px solid #547466; border-radius:12px; background:#264d40; color:white; font:inherit; }
-    .strava-key input::placeholder { color:#a9c2b8; }
+    .strava-key input { min-width:0; flex:1; padding:11px 12px; border:1px solid #5e6066; border-radius:12px; background:#303034; color:white; font:inherit; }
+    .strava-key input::placeholder { color:#aeb1b7; }
     .strava-key button, .strava-buttons button { border:0; border-radius:12px; font-weight:750; }
-    .strava-key button { padding:0 13px; background:#6fe5b0; color:#123b2d; }
-    .strava-key .key-lock { width:44px; padding:0; background:#315b4c; color:#e7f2ec; font-size:17px; }
-    .strava-key input:disabled { opacity:1; color:#c5ddd3; cursor:not-allowed; }
+    .strava-key button { padding:0 13px; background:#0a84ff; color:#fff; }
+    .strava-key .key-lock { width:44px; padding:0; background:#48484d; color:#f3f4f6; font-size:17px; }
+    .strava-key input:disabled { opacity:1; color:#d7d9de; cursor:not-allowed; }
     .strava-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
-    .strava-buttons button { min-height:44px; background:#6fe5b0; color:#123b2d; }
-    .strava-buttons .secondary { background:#315b4c; color:#e7f2ec; }
+    .strava-buttons button { min-height:44px; background:#0a84ff; color:#fff; }
+    .strava-buttons .secondary { background:#48484d; color:#f3f4f6; }
     .strava-buttons #connect-strava { grid-column:1 / -1; }
-    .strava-status { margin:12px 1px 0 !important; color:#e0efe8 !important; font-size:12px !important; }
+    .strava-status { margin:12px 1px 0 !important; color:#e1e3e7 !important; font-size:12px !important; }
     .coach-share-card { margin-top:24px; padding:18px; border:1px solid #cfc6e6; border-radius:18px; background:#f4f1fb; }
     .coach-share-card h2 { margin:0; color:#3f3567; font-size:18px; }
     .coach-share-card p { margin:6px 0 15px; color:#756c91; font-size:12px; line-height:1.5; }
@@ -283,6 +283,31 @@
     .running-pr-label { min-width:0; display:flex; align-items:center; gap:6px; }
     .running-pr-label .pr-crown { width:14px; height:14px; }
     .home-sport-hidden { display:none !important; }
+    /* App chrome palette: off-white, charcoal, cool gray and vivid blue.
+       Metric charts, zones, PR crowns and semantic success colors keep their own palettes. */
+    .avatar, .player-snapshot-icon, .ride-icon, .goal-setting .goal-icon, .settings-action .action-icon { background:var(--blue-soft); }
+    .period button, .scope-toggle button, .ride-summary-toggle button, .legend button, dialog .dialog-close-x,
+    .stream-tabs button, .find-button, .player-tabs, .dialog-actions .secondary, .calendar-head button,
+    .sport-switch { background:var(--soft); }
+    .legend button.active { background:#f7f9fc; }
+    .chart-tooltip, .activity-insight { background:var(--blue-soft); color:#24558a !important; }
+    .detail-overview div, .activity-metric, .activity-note, .splits-card { background:#f0f1f3; }
+    .activity-zone-bar, .power-zone-stack { background:#e5e7ea; }
+    .ride-type, .record-dialog label, .player-dialog label, .picker-label { color:#5e6269; }
+    dialog::backdrop { background:#1d1d1f88; }
+    dialog .dialog-close-x { color:#62666d; }
+    dialog .dialog-close-x:hover { background:#dfe2e7; }
+    .profile-apply { border-color:#9bcaff; background:#eef6ff; color:#0877df; }
+    .profile-apply:hover { background:#dcecff; }
+    .icon-choice.selected { border-color:var(--green); background:var(--blue-soft); color:var(--green); }
+    .calendar-day.in-range { background:#e2efff; }
+    .calendar-selection { background:#eef1f5; color:#555b64; }
+    .power-curve { background:#fbfbfc; }
+    @media (hover:hover) {
+      .period button:hover, .scope-toggle button:hover, .ride-summary-toggle button:hover, .legend button:hover,
+      .player-tabs button:hover, .calendar-shortcuts button:hover { background:#dfe2e7; }
+      .ride:hover, .settings-action:hover, .goal-setting:hover { background:#f8f9fb; }
+    }
     @media (max-width:430px) {
       .stats { grid-template-columns:repeat(2,1fr); }
       .app { padding-right:14px; padding-left:14px; }
