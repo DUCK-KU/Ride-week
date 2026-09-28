@@ -55,7 +55,7 @@ function toRide(activity) {
     stravaId: activity.id,
     title: activity.name,
     date: activity.start_date_local.slice(0, 10),
-    distance: Math.round((activity.distance / 1000) * 10) / 10,
+    distance: Math.round((activity.distance / 1000) * 100) / 100,
     distanceMeters: Number(activity.distance) || 0,
     duration: Math.round(activity.moving_time / 60),
     elevation: Math.round(activity.total_elevation_gain || 0),
