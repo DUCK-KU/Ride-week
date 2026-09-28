@@ -89,12 +89,9 @@ function toActivityDetail(activity, streams) {
     activity: {
       ...toRide(activity),
       splitsMetric: activity.splits_metric || [],
-      // Preserve Strava's PR effort values, including its own average_speed.
       bestEfforts: Array.isArray(activity.best_efforts) ? activity.best_efforts : [],
     },
     streams: {
-      // TSS needs uninterrupted, second-level samples. These three streams
-      // must not be chart-downsampled; the browser downsamples only for display.
       watts: Array.isArray(streams.watts?.data) ? streams.watts.data : [],
       time: Array.isArray(streams.time?.data) ? streams.time.data : [],
       moving: Array.isArray(streams.moving?.data) ? streams.moving.data : [],
@@ -191,8 +188,11 @@ export default {
         const activitiesUrl = new URL(STRAVA_ACTIVITIES_URL);
         activitiesUrl.searchParams.set('page', String(page));
         activitiesUrl.searchParams.set('per_page', String(perPage));
-        const response = await fetch(activitiesUrl, { headers: { authorization: `Bearer ${token.access_token}` } });
-        if (!response.ok) throw new Error('Strava 활동을 가져오지 못했습니다.');
+        const response = await fetch(activitiesUrl.toString(), { headers: { authorization: `Bearer ${token.access_token}` } });
+      if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(`Strava 활동 목록 오류 (${response.status}): ${detail}`);
+        }
         const activities = await response.json();
         const trackedActivities = activities.filter(supportedActivity).map(toRide);
         return json({
