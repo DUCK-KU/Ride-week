@@ -63,6 +63,7 @@ function toRide(activity) {
     averageSpeed: activity.average_speed ? Math.round(activity.average_speed * 36) / 10 : null,
     averageSpeedMetersPerSecond: Number(activity.average_speed) || null,
     averageWatts: Math.round(activity.weighted_average_watts || activity.average_watts || 0) || null,
+    stravaWeightedAveragePowerWatts: Math.round(activity.weighted_average_watts || 0) || null,
     averageCadence: Math.round(activity.average_cadence || 0) || null,
     averageHeartRate: Math.round(activity.average_heartrate || 0) || null,
     maxHeartRate: Math.round(activity.max_heartrate || 0) || null,
