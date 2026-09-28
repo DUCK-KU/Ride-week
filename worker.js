@@ -90,9 +90,11 @@ function toActivityDetail(activity, streams) {
       splitsMetric: activity.splits_metric || [],
     },
     streams: {
-      watts: compact(streams.watts?.data),
-      time: compact(streams.time?.data),
-      moving: compact(streams.moving?.data),
+      // TSS needs uninterrupted, second-level samples. These three streams
+      // must not be chart-downsampled; the browser downsamples only for display.
+      watts: Array.isArray(streams.watts?.data) ? streams.watts.data : [],
+      time: Array.isArray(streams.time?.data) ? streams.time.data : [],
+      moving: Array.isArray(streams.moving?.data) ? streams.moving.data : [],
       distance: compact(streams.distance?.data),
       cadence: compact(streams.cadence?.data),
       heartrate: compact(streams.heartrate?.data),
