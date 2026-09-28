@@ -38,7 +38,7 @@
     .player-snapshot-icon { width:27px; height:27px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); }
     .player-snapshot-icon svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .player-snapshot-copy { min-width:0; width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .player-snapshot-copy b, .running-pr b { display:block; min-width:112px; overflow:hidden; color:var(--deep); font-size:14px; line-height:1.2; text-align:right; text-overflow:ellipsis; white-space:nowrap; }
+    .player-snapshot-copy b, .running-pr b { display:block; min-width:0; flex:0 1 auto; overflow:hidden; color:var(--deep); font-size:14px; line-height:1.2; text-align:right; text-overflow:ellipsis; white-space:nowrap; }
     .player-snapshot-copy b { order:2; }
     .player-snapshot-copy > span, .running-pr-label > span { display:block; margin:0; color:var(--muted); font-size:10px; line-height:1.2; white-space:nowrap; }
     .player-snapshot-copy > span { order:1; }
@@ -279,8 +279,8 @@
     .player-snapshot { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
     .player-snapshot-item { min-height:45px; }
     .running-prs { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
-    .running-pr { min-height:32px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 12px; border-radius:18px; background:#fff; color:var(--deep); }
-    .running-pr-label { min-width:0; display:flex; align-items:center; gap:6px; }
+    .running-pr { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:0 18px; border-radius:18px; background:#fff; color:var(--deep); }
+    .running-pr-label { min-width:0; flex:0 0 auto; display:flex; align-items:center; gap:6px; }
     .running-pr-label .pr-crown { width:14px; height:14px; }
     .home-sport-hidden { display:none !important; }
     /* App chrome palette: off-white, charcoal, cool gray and vivid blue.
@@ -318,7 +318,7 @@
       .player-snapshot-copy { gap:6px; }
       .player-snapshot-copy b, .running-pr b { overflow:visible; font-size:12px; line-height:1.25; text-overflow:clip; white-space:nowrap; word-break:keep-all; }
       .player-snapshot-copy > span, .running-pr-label > span { font-size:9px; line-height:1.25; white-space:nowrap; word-break:keep-all; }
-      .running-pr { padding:0 10px; }
+      .running-pr { gap:12px; padding:0 14px; }
       .running-pr-label { gap:4px; }
       .running-pr-label .pr-crown { width:12px; height:12px; }
       .running-prs { gap:5px; }
