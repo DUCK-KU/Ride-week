@@ -125,7 +125,7 @@ export default {
         scope: 'read,activity:read_all',
         state,
       }).toString();
-      return Response.redirect(authorize, 302);
+      return Response.redirect(authorize.toString(), 302);
     }
 
     if (url.pathname === '/auth/strava/callback') {
