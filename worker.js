@@ -1,7 +1,7 @@
 const STRAVA_TOKEN_URL = 'https://www.strava.com/oauth/token';
 const STRAVA_AUTHORIZE_URL = 'https://www.strava.com/oauth/authorize';
 const STRAVA_ACTIVITIES_URL = 'https://www.strava.com/api/v3/athlete/activities';
-const stravaActivityUrl = id => `https://www.strava.com/api/v3/activities/${id}`;
+const stravaActivityUrl = id => `https://www.strava.com/api/v3/activities/${id}?include_all_efforts=true`;
 const stravaStreamsUrl = id => `https://www.strava.com/api/v3/activities/${id}/streams?keys=time,distance,moving,watts,cadence,heartrate,altitude,velocity_smooth&key_by_type=true`;
 
 const json = (value, status = 200, origin = '') => new Response(JSON.stringify(value), {
@@ -89,6 +89,8 @@ function toActivityDetail(activity, streams) {
     activity: {
       ...toRide(activity),
       splitsMetric: activity.splits_metric || [],
+      // Preserve Strava's PR effort values, including its own average_speed.
+      bestEfforts: Array.isArray(activity.best_efforts) ? activity.best_efforts : [],
     },
     streams: {
       // TSS needs uninterrupted, second-level samples. These three streams
