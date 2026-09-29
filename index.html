@@ -730,7 +730,8 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     function setStravaStatus(message){document.querySelector('#strava-status').textContent=message;}
     const powerAnalysisVersion=6;
     const needsCyclingAnalysis=record=>{if(!record?.stravaId||isRun(record)||record.stravaDetailVersion!==powerAnalysisVersion)return Boolean(record?.stravaId)&&!isRun(record);const savedFtp=Number(record.ftpWatts??record.powerMetrics?.ftp);const effectiveFtp=Number(ftpForDate(record.date));return savedFtp>0&&effectiveFtp>0&&savedFtp!==effectiveFtp;};
-    const needsStravaDetail=record=>Boolean(record?.stravaId)&&(isRun(record)?record.stravaDetailVersion!==5||!Array.isArray(record.paceMetrics?.zones)||!record.activityStreams:needsCyclingAnalysis(record)||!record.activityStreams);
+    const hasStoredActivityStreams=record=>Boolean(record?.activityStreams&&Object.values(record.activityStreams).some(values=>Array.isArray(values)&&values.length>1));
+    const needsStravaDetail=record=>Boolean(record?.stravaId)&&(isRun(record)?record.stravaDetailVersion!==5||!Array.isArray(record.paceMetrics?.zones)||!hasStoredActivityStreams(record):needsCyclingAnalysis(record)||!hasStoredActivityStreams(record));
     const pendingStravaDetailCount=()=>records.filter(needsStravaDetail).length;
     const stravaSportCounts=items=>items.reduce((counts,record)=>{counts[isRun(record)?'runs':'rides']++;return counts;},{runs:0,rides:0});
     const pendingStravaDetailCounts=()=>stravaSportCounts(records.filter(needsStravaDetail));
@@ -924,6 +925,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
   </script>
 </body>
 </html>
+
 
 
 
