@@ -880,7 +880,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     const persistRideAnalysis=renderActivityAnalysis;
     renderActivityAnalysis=(data,record)=>{persistRideAnalysis(data,record);record.activityStreams=downsampleActivityStreams(activityStreams);localStorage.setItem(storageKey,JSON.stringify(records));};
     const persistRunAnalysis=renderRunActivityAnalysis;
-    renderRunActivityAnalysis=(data,record)=>{persistRunAnalysis(data,record);record.activityStreams=downsampleActivityStreams(activityStreams);restoreStoredStreams(record);localStorage.setItem(storageKey,JSON.stringify(records));};
+    renderRunActivityAnalysis=(data,record)=>{const velocities=(data.streams?.velocity_smooth||[]).map(Number);const runStreams={pace:velocities.map(value=>value>0?1000/value:null),heartrate:(data.streams?.heartrate||[]).map(Number),altitude:(data.streams?.altitude||[]).map(Number)};persistRunAnalysis(data,record);record.activityStreams=downsampleActivityStreams(Object.fromEntries(Object.entries(runStreams).filter(([,values])=>values.filter(Number.isFinite).length>1)));restoreStoredStreams(record);localStorage.setItem(storageKey,JSON.stringify(records));};
     function downsampleActivityStreams(streams){return Object.fromEntries(Object.entries(streams||{}).filter(([,values])=>Array.isArray(values)&&values.length>1).map(([name,values])=>{const step=Math.max(1,Math.ceil(values.length/96));return [name,values.filter((_,index)=>index%step===0).slice(0,96).map(value=>Number.isFinite(Number(value))?Number(Number(value).toFixed(1)):null)];}));}
     const abortableFetchActivityDetail=fetchActivityDetail;
     fetchActivityDetail=async record=>{if(stravaSyncAbortController?.signal.aborted)throw new DOMException('동기화가 정지되었습니다.','AbortError');const data=await abortableFetchActivityDetail(record);if(stravaSyncAbortController?.signal.aborted)throw new DOMException('동기화가 정지되었습니다.','AbortError');return data;};
@@ -924,6 +924,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
   </script>
 </body>
 </html>
+
 
 
 
