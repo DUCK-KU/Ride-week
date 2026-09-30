@@ -246,21 +246,28 @@
     .plan-day.outside { color:#a9b0b5; }
     .plan-day.today { background:var(--blue-soft); color:var(--green); font-weight:800; }
     .plan-day.selected { outline:1px solid var(--green); outline-offset:-1px; }
-    .plan-day-markers { display:flex; align-items:center; justify-content:center; gap:3px; height:8px; }
-    .plan-day-markers i { width:7px; height:7px; border-radius:50%; background:#0a84ff; }
+    .plan-day-markers { display:flex; align-items:center; justify-content:center; gap:1px; height:8px; }
+    .plan-day-markers i { width:6px; height:6px; flex:none; border-radius:50%; background:#0a84ff; }
     .plan-day-markers i.run { background:#f4a261; }
-    .plan-day-markers i.planned { border:1.5px solid var(--deep); background:transparent; }
+    .plan-day-markers i.planned { border:1.2px solid #0a84ff; background:transparent; }
+    .plan-day-markers i.planned.run { border-color:#f4a261; background:transparent; }
+    .plan-day-markers i.planned.other { border-color:#8d969e; background:transparent; }
     .plan-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:7px; color:var(--muted); font-size:10px; }
     .plan-legend span { display:inline-flex; align-items:center; gap:5px; }
     .plan-legend i { display:inline-block; width:8px; height:8px; border-radius:50%; background:#0a84ff; }
     .plan-legend i.run { background:#f4a261; }
-    .plan-legend i.planned { border:1.5px solid var(--deep); background:transparent; }
+    .plan-legend i.planned { border:1.5px solid #0a84ff; background:transparent; }
+    .plan-legend i.planned.run { border-color:#f4a261; background:transparent; }
+    .plan-legend i.planned.other { border-color:#8d969e; background:transparent; }
     .plan-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:20px 0 12px; }
     .plan-list-head h2 { margin:0; }
     .plan-list { display:grid; gap:10px; }
     .plan-card { padding:15px; border-radius:18px; background:#fff; }
     .plan-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
     .plan-card-head strong { color:var(--deep); font-size:14px; }
+    .plan-card-sport-dot { display:inline-block; width:9px; height:9px; margin-right:6px; border:1.7px solid #0a84ff; border-radius:50%; vertical-align:1px; }
+    .plan-card-sport-dot.run { border-color:#f4a261; }
+    .plan-card-sport-dot.other { border-color:#8d969e; }
     .plan-card-actions { display:flex; flex:none; gap:5px; }
     .plan-card-actions button { padding:5px 7px; border:0; border-radius:8px; background:var(--soft); color:var(--deep); font-size:11px; font-weight:700; }
     .plan-card-actions button[data-plan-end] { color:var(--muted); }
@@ -457,7 +464,7 @@
       <div class="calendar-head"><button type="button" id="plan-prev-month" aria-label="이전 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="plan-month-label" id="plan-month-label"></div><button type="button" id="plan-next-month" aria-label="다음 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
       <div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
       <div class="plan-days" id="plan-calendar-days"></div>
-      <div class="plan-legend"><span><i></i>라이딩</span><span><i class="run"></i>러닝</span><span><i class="planned"></i>예정 일정</span></div>
+      <div class="plan-legend"><span><i></i>라이딩 기록</span><span><i class="run"></i>러닝 기록</span><span><i class="planned"></i>라이딩 예정</span><span><i class="planned run"></i>러닝 예정</span><span><i class="planned other"></i>기타 예정</span></div>
     </section>
     <div class="plan-list-head"><h2>예정된 일정</h2><button class="add-button" id="open-plan-add" type="button">+ 일정 추가</button></div>
     <section class="plan-list" id="plan-list" aria-label="예정된 일정"></section>
@@ -676,17 +683,18 @@
       const recorded=records.filter(record=>record.date&&record.id&&!String(record.id).startsWith('seed-'));
       const rideDays=new Set(recorded.filter(record=>!isRun(record)).map(record=>record.date));
       const runDays=new Set(recorded.filter(isRun).map(record=>record.date));
-      const plannedDays=new Set(activePlans().map(plan=>plan.date));
+      const plannedByDay=new Map();
+      activePlans().forEach(plan=>{if(!plannedByDay.has(plan.date))plannedByDay.set(plan.date,new Set());plannedByDay.get(plan.date).add(plan.sport==='run'?'run':plan.sport==='other'?'other':'ride');});
       document.querySelector('#plan-month-label').textContent=`${year}년 ${month+1}월`;
       const start=new Date(year,month,1);start.setDate(1-start.getDay());
       const visibleCount=Math.ceil((new Date(year,month+1,0).getDate()+new Date(year,month,1).getDay())/7)*7;
       document.querySelector('#plan-calendar-days').innerHTML=Array.from({length:visibleCount},(_,index)=>{
-        const date=new Date(start);date.setDate(start.getDate()+index);const key=calendarKey(date);
-        const markers=`${rideDays.has(key)?'<i aria-hidden="true"></i>':''}${runDays.has(key)?'<i class="run" aria-hidden="true"></i>':''}${plannedDays.has(key)?'<i class="planned" aria-hidden="true"></i>':''}`;
-        return `<button type="button" class="plan-day${date.getMonth()!==month?' outside':''}${key===calendarKey(new Date())?' today':''}${key===selectedPlanDate?' selected':''}" data-plan-date="${key}" aria-label="${formatFullDate(date)}${rideDays.has(key)?' 라이딩 기록 있음':''}${runDays.has(key)?' 러닝 기록 있음':''}${plannedDays.has(key)?' 예정 일정 있음':''}"><span>${date.getDate()}</span><span class="plan-day-markers">${markers}</span></button>`;
+        const date=new Date(start);date.setDate(start.getDate()+index);const key=calendarKey(date);const planned=plannedByDay.get(key)||new Set();
+        const markers=`${rideDays.has(key)?'<i aria-hidden="true"></i>':''}${runDays.has(key)?'<i class="run" aria-hidden="true"></i>':''}${planned.has('ride')?'<i class="planned" aria-hidden="true"></i>':''}${planned.has('run')?'<i class="planned run" aria-hidden="true"></i>':''}${planned.has('other')?'<i class="planned other" aria-hidden="true"></i>':''}`;
+        return `<button type="button" class="plan-day${date.getMonth()!==month?' outside':''}${key===calendarKey(new Date())?' today':''}${key===selectedPlanDate?' selected':''}" data-plan-date="${key}" aria-label="${formatFullDate(date)}${rideDays.has(key)?' 라이딩 기록 있음':''}${runDays.has(key)?' 러닝 기록 있음':''}${planned.has('ride')?' 라이딩 일정 있음':''}${planned.has('run')?' 러닝 일정 있음':''}${planned.has('other')?' 기타 일정 있음':''}"><span>${date.getDate()}</span><span class="plan-day-markers">${markers}</span></button>`;
       }).join('');
       const upcoming=activePlans().sort((a,b)=>a.date.localeCompare(b.date)||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
-      document.querySelector('#plan-list').innerHTML=upcoming.length?upcoming.map(plan=>{const details=[plan.environment==='indoor'?'실내':plan.environment==='outdoor'?'실외':'',Number(plan.durationMinutes)>0?`예상 ${Number(plan.durationMinutes)}분`:''].filter(Boolean).join(' · ');return `<article class="plan-card"><div class="plan-card-head"><strong>${plan.sport==='run'?'러닝':plan.sport==='other'?'기타':'라이딩'} · ${escapePlanText(formatFullDate(parseDate(plan.date)))}</strong><div class="plan-card-actions"><button type="button" data-plan-edit="${escapePlanText(plan.id)}" aria-label="일정 수정">수정</button><button type="button" data-plan-end="${escapePlanText(plan.id)}" aria-label="일정 종료">종료</button></div></div>${details?`<p class="plan-card-meta">${details}</p>`:''}${plan.note?`<p class="plan-card-note">${escapePlanText(plan.note)}</p>`:''}</article>`;}).join(''):'<p class="plan-empty">아직 예정된 일정이 없어요. GPT 코칭에서 정한 다음 활동을 적어보세요.</p>';
+      document.querySelector('#plan-list').innerHTML=upcoming.length?upcoming.map(plan=>{const kind=plan.sport==='run'?'run':plan.sport==='other'?'other':'ride';const details=[plan.environment==='indoor'?'실내':plan.environment==='outdoor'?'실외':'',Number(plan.durationMinutes)>0?`예상 ${Number(plan.durationMinutes)}분`:''].filter(Boolean).join(' · ');return `<article class="plan-card"><div class="plan-card-head"><strong><i class="plan-card-sport-dot ${kind}" aria-hidden="true"></i>${kind==='run'?'러닝':kind==='other'?'기타':'라이딩'} · ${escapePlanText(formatFullDate(parseDate(plan.date)))}</strong><div class="plan-card-actions"><button type="button" data-plan-edit="${escapePlanText(plan.id)}" aria-label="일정 수정">수정</button><button type="button" data-plan-end="${escapePlanText(plan.id)}" aria-label="일정 종료">종료</button></div></div>${details?`<p class="plan-card-meta">${details}</p>`:''}${plan.note?`<p class="plan-card-note">${escapePlanText(plan.note)}</p>`:''}</article>`;}).join(''):'<p class="plan-empty">아직 예정된 일정이 없어요. GPT 코칭에서 정한 다음 활동을 적어보세요.</p>';
     }
     function renderRideCalendar(){const recordYears=records.map(record=>parseDate(record.date).getFullYear()).filter(Number.isFinite);const currentYear=today.getFullYear();const firstYear=Math.min(currentYear-10,...recordYears);const lastYear=Math.max(currentYear+1,...recordYears);const yearSelect=document.querySelector('#calendar-year');yearSelect.innerHTML=Array.from({length:lastYear-firstYear+1},(_,index)=>firstYear+index).map(year=>`<option value="${year}"${year===calendarMonth.getFullYear()?' selected':''}>${year}년</option>`).join('');const monthSelect=document.querySelector('#calendar-month');monthSelect.innerHTML=Array.from({length:12},(_,index)=>`<option value="${index}"${index===calendarMonth.getMonth()?' selected':''}>${index+1}월</option>`).join('');const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1);const cursor=new Date(first);cursor.setDate(1-first.getDay());document.querySelector('#calendar-grid').innerHTML=Array.from({length:42},()=>{const date=new Date(cursor);cursor.setDate(cursor.getDate()+1);const key=calendarKey(date);const outside=date.getMonth()!==calendarMonth.getMonth();const selected=key===calendarDraft.start||key===calendarDraft.end;const inRange=calendarDraft.start&&calendarDraft.end&&key>calendarDraft.start&&key<calendarDraft.end;return `<button class="calendar-day${outside?' outside':''}${inRange?' in-range':''}${selected?' selected':''}" type="button" data-calendar-date="${key}" aria-label="${formatFullDate(date)}">${date.getDate()}</button>`;}).join('');const label=calendarDraft.start?calendarDraft.end?`${formatFullDate(parseDate(calendarDraft.start))} — ${formatFullDate(parseDate(calendarDraft.end))}`:`${formatFullDate(parseDate(calendarDraft.start))} · 종료일을 선택하세요`:'기간을 선택해 주세요';document.querySelector('#calendar-selection').textContent=label;}
     function automaticRideIcon(record){
