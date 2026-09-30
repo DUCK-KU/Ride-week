@@ -237,8 +237,9 @@
     .calendar-weekdays, .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
     .calendar-weekdays span { padding:5px 0; color:var(--muted); font-size:10px; text-align:center; }
     .plan-calendar { margin-top:14px; padding:11px 12px 12px; border-radius:20px; background:#fff; }
-    .plan-calendar .calendar-head { grid-template-columns:32px 1fr 32px; margin:0 0 5px; }
+    .plan-calendar .calendar-head { grid-template-columns:32px 1fr 40px 32px; margin:0 0 5px; }
     .plan-calendar .calendar-head button { display:grid; width:32px; height:32px; place-items:center; padding:0; border:0; background:transparent; color:var(--deep); }
+    .plan-calendar .calendar-head #plan-today { width:40px; color:#0a84ff; font-size:11px; font-weight:800; }
     .plan-calendar .calendar-head button svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
     .plan-month-label { color:var(--deep); font-size:15px; font-weight:800; text-align:center; }
     .plan-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:1px; }
@@ -461,7 +462,7 @@
   <main class="app page" id="plans-page" hidden>
     <header class="page-header"><div><h1>일정</h1><p class="date">코칭받은 운동 일정을 가볍게 적어두세요</p></div></header>
     <section class="plan-calendar" aria-label="운동 및 예정 일정 달력">
-      <div class="calendar-head"><button type="button" id="plan-prev-month" aria-label="이전 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="plan-month-label" id="plan-month-label"></div><button type="button" id="plan-next-month" aria-label="다음 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
+      <div class="calendar-head"><button type="button" id="plan-prev-month" aria-label="이전 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="plan-month-label" id="plan-month-label"></div><button type="button" id="plan-today" aria-label="오늘로 이동">오늘</button><button type="button" id="plan-next-month" aria-label="다음 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
       <div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
       <div class="plan-days" id="plan-calendar-days"></div>
       <div class="plan-legend"><span><i></i>라이딩 기록</span><span><i class="run"></i>러닝 기록</span><span><i class="planned"></i>라이딩 예정</span><span><i class="planned run"></i>러닝 예정</span><span><i class="planned other"></i>기타 예정</span></div>
@@ -877,6 +878,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     }
     document.querySelector('#plan-prev-month').addEventListener('click',()=>{planMonth=new Date(planMonth.getFullYear(),planMonth.getMonth()-1,1);selectedPlanDate=calendarKey(planMonth);renderPlans();});
     document.querySelector('#plan-next-month').addEventListener('click',()=>{planMonth=new Date(planMonth.getFullYear(),planMonth.getMonth()+1,1);selectedPlanDate=calendarKey(planMonth);renderPlans();});
+    document.querySelector('#plan-today').addEventListener('click',()=>{const current=new Date();planMonth=new Date(current.getFullYear(),current.getMonth(),1);selectedPlanDate=calendarKey(current);renderPlans();});
     document.querySelector('#plan-calendar-days').addEventListener('click',event=>{const day=event.target.closest('[data-plan-date]');if(!day)return;selectedPlanDate=day.dataset.planDate;const date=parseDate(selectedPlanDate);planMonth=new Date(date.getFullYear(),date.getMonth(),1);renderPlans();});
     document.querySelector('#open-plan-add').addEventListener('click',()=>openPlanEditor());
     document.querySelector('#cancel-plan').addEventListener('click',()=>planDialog.close());
