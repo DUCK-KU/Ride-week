@@ -675,7 +675,7 @@
     let editingId=null;
     const parseDate=value=>new Date(`${value}T00:00:00`);
     const weekday=date=>['일','월','화','수','목','금','토'][date.getDay()];
-    const formatDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일(${weekday(date)})`;
+    const formatDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일 • ${weekday(date)}`;
     const formatFullDate=formatDate;
     const calendarKey=date=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
     const escapePlanText=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
