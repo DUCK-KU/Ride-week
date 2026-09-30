@@ -12,7 +12,7 @@ const json = (value, status = 200, origin = '') => new Response(JSON.stringify(v
 const cors = origin => ({
   'access-control-allow-origin': origin,
   'access-control-allow-headers': 'content-type, x-ride-week-key',
-  'access-control-allow-methods': 'GET, OPTIONS',
+  'access-control-allow-methods': 'GET, PUT, OPTIONS',
   vary: 'Origin',
 });
 
@@ -20,6 +20,19 @@ const configuredOrigin = env => new URL(env.FRONTEND_URL).origin;
 const allowedOrigin = (request, env) => request.headers.get('Origin') === configuredOrigin(env) ? configuredOrigin(env) : configuredOrigin(env);
 
 const isAuthorized = (request, env) => request.headers.get('x-ride-week-key') === env.RIDE_WEEK_SYNC_KEY;
+const planTimestamp = plan => Date.parse(plan.updatedAt || plan.endedAt || plan.createdAt || '') || 0;
+const validPlan = plan => plan && typeof plan.id === 'string' && plan.id.length <= 100 &&
+  /^\d{4}-\d{2}-\d{2}$/.test(plan.date || '') && ['ride', 'run', 'other'].includes(plan.sport) &&
+  ['active', 'ended'].includes(plan.status) && String(plan.note || '').length <= 5000;
+const mergePlans = (current, incoming) => {
+  const byId = new Map();
+  [...current, ...incoming].forEach(plan => {
+    if (!validPlan(plan)) return;
+    const prior = byId.get(plan.id);
+    if (!prior || planTimestamp(plan) > planTimestamp(prior)) byId.set(plan.id, plan);
+  });
+  return [...byId.values()];
+};
 
 async function refreshTokenIfNeeded(env) {
   const saved = await env.TOKENS.get('strava-tokens', 'json');
@@ -153,6 +166,37 @@ export default {
     if (url.pathname === '/api/status') {
       if (!isAuthorized(request, env)) return json({ error: '권한이 없습니다.' }, 401, origin);
       return json({ connected: Boolean(await env.TOKENS.get('strava-tokens')) }, 200, origin);
+    }
+
+    if (url.pathname === '/api/settings') {
+      if (!isAuthorized(request, env)) return json({ error: '권한이 없습니다.' }, 401, origin);
+      if (request.method === 'GET') return json(await env.TOKENS.get('ride-week-settings-v1', 'json') || { settings: null, updatedAt: null }, 200, origin);
+      if (request.method !== 'PUT') return json({ error: '허용되지 않는 요청입니다.' }, 405, origin);
+      try {
+        const raw = await request.text();
+        if (raw.length > 100000) return json({ error: '설정 데이터가 너무 큽니다.' }, 413, origin);
+        const { settings } = JSON.parse(raw);
+        if (!settings || typeof settings !== 'object' || !settings.goals || !settings.playerData) return json({ error: '올바르지 않은 설정입니다.' }, 400, origin);
+        const saved = { settings, updatedAt: new Date().toISOString() };
+        await env.TOKENS.put('ride-week-settings-v1', JSON.stringify(saved));
+        return json(saved, 200, origin);
+      } catch { return json({ error: '설정 저장에 실패했습니다.' }, 400, origin); }
+    }
+
+    if (url.pathname === '/api/plans') {
+      if (!isAuthorized(request, env)) return json({ error: '권한이 없습니다.' }, 401, origin);
+      const current = await env.TOKENS.get('ride-week-plans-v1', 'json') || { plans: [], updatedAt: null };
+      if (request.method === 'GET') return json(current, 200, origin);
+      if (request.method !== 'PUT') return json({ error: '허용되지 않는 요청입니다.' }, 405, origin);
+      try {
+        const raw = await request.text();
+        if (raw.length > 100000) return json({ error: '일정 데이터가 너무 큽니다.' }, 413, origin);
+        const { plans } = JSON.parse(raw);
+        if (!Array.isArray(plans) || plans.length > 200 || plans.some(plan => !validPlan(plan))) return json({ error: '올바르지 않은 일정입니다.' }, 400, origin);
+        const saved = { plans: mergePlans(current.plans || [], plans), updatedAt: new Date().toISOString() };
+        await env.TOKENS.put('ride-week-plans-v1', JSON.stringify(saved));
+        return json(saved, 200, origin);
+      } catch { return json({ error: '일정 저장에 실패했습니다.' }, 400, origin); }
     }
 
     if (url.pathname.startsWith('/api/activities/')) {
