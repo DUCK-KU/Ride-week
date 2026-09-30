@@ -95,7 +95,7 @@
     .scope-toggle button.active { border-color:var(--deep); background:var(--deep); color:#fff; }
     .chevron { color:#aab3ad; font-size:21px; }
     .bottom { position:fixed; z-index:50; right:0; bottom:0; left:0; width:100%; display:flex; justify-content:center; padding:8px max(20px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left)); background:rgba(255,255,255,.92); border-top:1px solid var(--line); backdrop-filter:blur(12px); }
-    .nav { width:100%; max-width:540px; margin:0 auto; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .nav { width:100%; max-width:540px; margin:0 auto; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); }
     [hidden] { display:none !important; }
     .nav button { display:grid; justify-items:center; gap:3px; min-height:50px; border:0; outline:0; background:transparent; color:var(--muted); font-size:11px; }
     .nav button.active { color:var(--green); font-weight:800; }
@@ -176,7 +176,7 @@
     .record-dialog { max-height:90vh; overflow:auto; }
     .record-dialog form { display:grid; gap:12px; }
     .record-dialog label { display:grid; gap:6px; color:#48564e; font-size:13px; font-weight:700; }
-    .record-dialog input, .record-dialog textarea { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
+    .record-dialog input, .record-dialog textarea, .record-dialog select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
     .record-dialog textarea { min-height:72px; resize:vertical; }
     .player-dialog form { display:grid; gap:12px; }
     .player-dialog { width:min(680px,calc(100% - 24px)); }
@@ -236,6 +236,34 @@
     .calendar-jump select { width:auto; padding:7px 22px 7px 8px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--deep); font:inherit; font-size:12px; font-weight:750; }
     .calendar-weekdays, .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
     .calendar-weekdays span { padding:5px 0; color:var(--muted); font-size:10px; text-align:center; }
+    .plan-calendar { margin-top:18px; padding:16px 12px 18px; border-radius:20px; background:#fff; }
+    .plan-calendar .calendar-head { margin:0 0 10px; }
+    .plan-month-label { color:var(--deep); font-size:16px; font-weight:800; text-align:center; }
+    .plan-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; }
+    .plan-day { display:flex; min-width:0; min-height:51px; flex-direction:column; align-items:center; justify-content:flex-start; gap:5px; padding:7px 1px 3px; border:0; border-radius:12px; background:transparent; color:var(--ink); font-size:12px; }
+    .plan-day.outside { color:#a9b0b5; }
+    .plan-day.today { background:var(--blue-soft); color:var(--green); font-weight:800; }
+    .plan-day.selected { outline:1px solid var(--green); outline-offset:-1px; }
+    .plan-day-markers { display:flex; align-items:center; justify-content:center; gap:3px; height:8px; }
+    .plan-day-markers i { width:7px; height:7px; border-radius:50%; background:var(--green); }
+    .plan-day-markers i.planned { border:1px solid var(--green); background:repeating-linear-gradient(135deg,#0a84ff 0 1px,#fff 1px 3px); }
+    .plan-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:12px; color:var(--muted); font-size:11px; }
+    .plan-legend span { display:inline-flex; align-items:center; gap:5px; }
+    .plan-legend i { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--green); }
+    .plan-legend i.planned { border:1px solid var(--green); background:repeating-linear-gradient(135deg,#0a84ff 0 1px,#fff 1px 3px); }
+    .plan-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:20px 0 12px; }
+    .plan-list-head h2 { margin:0; }
+    .plan-list { display:grid; gap:10px; }
+    .plan-card { padding:15px; border-radius:18px; background:#fff; }
+    .plan-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .plan-card-head strong { color:var(--deep); font-size:14px; }
+    .plan-card-actions { display:flex; flex:none; gap:5px; }
+    .plan-card-actions button { padding:5px 7px; border:0; border-radius:8px; background:var(--soft); color:var(--deep); font-size:11px; font-weight:700; }
+    .plan-card-actions button[data-plan-end] { color:var(--muted); }
+    .plan-card-meta { margin:5px 0 0; color:var(--muted); font-size:11px; }
+    .plan-card-note { margin:12px 0 0; color:var(--ink); font-size:13px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .plan-empty { padding:25px 16px; border-radius:18px; background:#fff; color:var(--muted); font-size:13px; text-align:center; }
+    #plan-form textarea { min-height:110px; overflow:hidden; resize:none; line-height:1.55; }
     .calendar-day { aspect-ratio:1; padding:0; border:0; border-radius:50%; background:transparent; color:var(--ink); font-size:12px; }
     .calendar-day.outside { color:#bdc5c0; }
     .calendar-day.in-range { border-radius:9px; background:#e5f2ea; }
@@ -419,6 +447,17 @@
     <section class="ride-totals" aria-label="선택 기간 러닝 합계"><div class="ride-total"><b id="run-count">0</b><span>총 횟수</span></div><div class="ride-total"><b id="run-total-time">0분</b><span>운동 시간</span></div><div class="ride-total"><b id="run-total-distance">0km</b><span>거리</span></div><div class="ride-total"><b id="run-total-elevation">0m</b><span>상승고도</span></div></section>
     <section class="record-list" id="run-record-list" aria-label="러닝 전체 목록"></section>
   </main>
+  <main class="app page" id="plans-page" hidden>
+    <header class="page-header"><div><h1>계획</h1><p class="date">코칭받은 운동 계획을 가볍게 적어두세요</p></div></header>
+    <section class="plan-calendar" aria-label="운동 및 계획 달력">
+      <div class="calendar-head"><button type="button" id="plan-prev-month" aria-label="이전 달">‹</button><div class="plan-month-label" id="plan-month-label"></div><button type="button" id="plan-next-month" aria-label="다음 달">›</button></div>
+      <div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="plan-days" id="plan-calendar-days"></div>
+      <div class="plan-legend"><span><i></i>운동 기록</span><span><i class="planned"></i>예정된 계획</span><span>표시 없음 · 쉬는 날</span></div>
+    </section>
+    <div class="plan-list-head"><h2>예정된 계획</h2><button class="add-button" id="open-plan-add" type="button">+ 계획 추가</button></div>
+    <section class="plan-list" id="plan-list" aria-label="예정된 운동 계획"></section>
+  </main>
   <main class="app page" id="settings-page" hidden>
     <header class="page-header"><div><h1>설정</h1><p class="date">기록을 안전하게 관리하세요</p></div></header>
     <section class="strava-card" id="settings-strava" aria-label="Strava 연결">
@@ -450,10 +489,19 @@
     </section>
   </main>
   <nav class="bottom" aria-label="주 메뉴"><div class="nav">
-    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3v6.7M12 14.3V21M3 12h6.7M14.3 12H21M5.6 5.6l4.7 4.7M13.7 13.7l4.7 4.7M18.4 5.6l-4.7 4.7M10.3 13.7l-4.7 4.7"/></svg></b>라이딩</button><button data-page="runs"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5c2.8.2 5.2-.8 6.9-4.7l2.1 1 2.5 3.5 5.7 2.5c.8.4 1.2 1 1.2 1.8v2.2H3v-5.8Z"/><path d="M3 17.3v2h18.4v-2M12.1 8.2l-1.5 2.2M14.2 9.7l-1.5 2.1M16.3 10.7l-1.2 2"/></svg></b>러닝</button><button data-page="settings"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.07 14H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06-.06a1.7 1.7 0 0 0 1.56 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg></b>설정</button>
+    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3v6.7M12 14.3V21M3 12h6.7M14.3 12H21M5.6 5.6l4.7 4.7M13.7 13.7l4.7 4.7M18.4 5.6l-4.7 4.7M10.3 13.7l-4.7 4.7"/></svg></b>라이딩</button><button data-page="runs"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5c2.8.2 5.2-.8 6.9-4.7l2.1 1 2.5 3.5 5.7 2.5c.8.4 1.2 1 1.2 1.8v2.2H3v-5.8Z"/><path d="M3 17.3v2h18.4v-2M12.1 8.2l-1.5 2.2M14.2 9.7l-1.5 2.1M16.3 10.7l-1.2 2"/></svg></b>러닝</button><button data-page="plans"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></b>계획</button><button data-page="settings"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.07 14H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06-.06a1.7 1.7 0 0 0 1.56 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg></b>설정</button>
   </div></nav>
   <dialog id="detail"><button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button><h3 id="detail-title"></h3><p id="detail-text"></p><div class="detail-overview" id="detail-overview"></div><section class="activity-analysis" id="activity-analysis" hidden><div class="activity-metrics" id="activity-metrics"></div><p class="activity-insight" id="activity-insight"></p><div class="activity-note" id="activity-note" hidden></div><div class="activity-zone-charts" id="activity-zone-charts"></div><div class="stream-tabs" id="stream-tabs"></div><svg class="stream-chart" id="stream-chart" viewBox="0 0 300 136" role="img" aria-label="파워, 케이던스, 심박, 고도 통합 그래프"></svg></section><div class="dialog-actions"><button class="secondary" type="button" id="refresh-strava-detail" aria-label="Strava 원본 다시 불러오기" title="Strava 원본 다시 불러오기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5"/><path d="M18.2 15.5A7.5 7.5 0 1 1 19.7 9"/></svg></button><button class="secondary" type="button" id="edit-detail">수정</button><button type="button" id="close-detail">닫기</button></div></dialog>
   <dialog id="ride-search-dialog"><button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button><form id="ride-search-form"><h3>기간으로 기록 찾기</h3><p>달력에서 시작일과 종료일을 차례로 선택하세요.</p><div class="calendar-head"><button type="button" id="calendar-prev" aria-label="이전 달">‹</button><div class="calendar-jump"><select id="calendar-year" aria-label="연도 선택"></select><select id="calendar-month" aria-label="월 선택"></select></div><button type="button" id="calendar-next" aria-label="다음 달">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="calendar-grid" id="calendar-grid"></div><div class="calendar-selection" id="calendar-selection">기간을 선택해 주세요</div><div class="calendar-shortcuts"><button type="button" id="calendar-today">오늘로 가기</button><button type="button" id="calendar-show-month">선택 월 보기</button><button type="button" id="calendar-show-year">선택 연도 보기</button></div><div class="dialog-actions"><button class="secondary" type="button" id="reset-ride-search">전체 보기</button><button class="secondary" type="button" id="cancel-ride-search">취소</button><button type="submit">기간 적용</button></div></form></dialog>
+  <dialog class="record-dialog" id="plan-dialog">
+    <button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button>
+    <form id="plan-form"><h3 id="plan-form-title">계획 추가</h3>
+      <div class="form-grid"><label>종목<select name="sport" required><option value="ride">라이딩</option><option value="run">러닝</option></select></label><label>예정 날짜<input name="date" type="date" required></label></div>
+      <div class="form-grid"><label>장소<select name="environment" required><option value="outdoor">실외</option><option value="indoor">실내</option></select></label><label>예상 시간 (분)<input name="durationMinutes" type="number" min="1" max="1440" step="1" required></label></div>
+      <label>메모<textarea name="note" placeholder="GPT 코칭에서 기억할 내용이나 운동 목표를 적어두세요"></textarea></label>
+      <div class="dialog-actions"><button class="secondary" type="button" id="cancel-plan">취소</button><button type="submit">저장</button></div>
+    </form>
+  </dialog>
   <dialog class="player-dialog" id="player-data-dialog">
     <button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button>
     <form id="player-data-form">
@@ -545,6 +593,7 @@
     const settingsUpdatedStorageKey='ride-week-settings-updated-v1';
     const ftpStorageKey='ride-week-ftp-v1';
     const playerDataStorageKey='ride-week-player-data-v1';
+    const plansStorageKey='ride-week-plans-v1';
     const stravaWorkerUrl='https://purple-brook-38dcride-week-strava.kimduckgeun.workers.dev';
     const iconNames={sun:'해',moon:'달',rain:'비',wind:'바람',mountain:'산',medal:'메달',indoor:'실내',group:'그룹 라이딩'};
     const iconPaths={
@@ -570,6 +619,10 @@
     ].map((r,i)=>({id:`seed-${i}`,title:r[0],date:dayOffset(r[1]),distance:r[2],duration:r[3],elevation:r[4],load:r[5],note:'',icon:['moon','moon','sun','mountain','sun','medal','sun','mountain','wind','sun','rain','sun'][i]}));
     let records=[];
     try { records=JSON.parse(localStorage.getItem(storageKey)) || seedRecords; } catch { records=seedRecords; }
+    let plans=[];
+    try { const storedPlans=JSON.parse(localStorage.getItem(plansStorageKey));plans=Array.isArray(storedPlans)?storedPlans:[]; } catch {}
+    let planMonth=new Date(today.getFullYear(),today.getMonth(),1);
+    let selectedPlanDate=iso(today);
     let goals={weeklyDistance:100,monthlyDistance:400,annualDistance:5000,runWeeklyDistance:20,runMonthlyDistance:80,runAnnualDistance:1000};
     try { goals={...goals,...JSON.parse(localStorage.getItem(goalsStorageKey))}; } catch {}
     let activePeriod='week';
@@ -612,6 +665,23 @@
     const formatDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
     const formatFullDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
     const calendarKey=date=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    const escapePlanText=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const activePlans=()=>plans.filter(plan=>plan.status!=='ended'&&/^\d{4}-\d{2}-\d{2}$/.test(plan.date||''));
+    function renderPlans(){
+      const year=planMonth.getFullYear(),month=planMonth.getMonth();
+      const recordedDays=new Set(records.filter(record=>record.date&&record.id&&!String(record.id).startsWith('seed-')).map(record=>record.date));
+      const plannedDays=new Set(activePlans().map(plan=>plan.date));
+      document.querySelector('#plan-month-label').textContent=`${year}년 ${month+1}월`;
+      const start=new Date(year,month,1);start.setDate(1-start.getDay());
+      const visibleCount=Math.ceil((new Date(year,month+1,0).getDate()+new Date(year,month,1).getDay())/7)*7;
+      document.querySelector('#plan-calendar-days').innerHTML=Array.from({length:visibleCount},(_,index)=>{
+        const date=new Date(start);date.setDate(start.getDate()+index);const key=calendarKey(date);
+        const markers=`${recordedDays.has(key)?'<i aria-hidden="true"></i>':''}${plannedDays.has(key)?'<i class="planned" aria-hidden="true"></i>':''}`;
+        return `<button type="button" class="plan-day${date.getMonth()!==month?' outside':''}${key===calendarKey(new Date())?' today':''}${key===selectedPlanDate?' selected':''}" data-plan-date="${key}" aria-label="${formatFullDate(date)}${recordedDays.has(key)?' 운동 기록 있음':''}${plannedDays.has(key)?' 계획 있음':''}"><span>${date.getDate()}</span><span class="plan-day-markers">${markers}</span></button>`;
+      }).join('');
+      const upcoming=activePlans().sort((a,b)=>a.date.localeCompare(b.date)||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+      document.querySelector('#plan-list').innerHTML=upcoming.length?upcoming.map(plan=>`<article class="plan-card"><div class="plan-card-head"><strong>${plan.sport==='run'?'러닝':'라이딩'} · ${escapePlanText(formatFullDate(parseDate(plan.date)))}</strong><div class="plan-card-actions"><button type="button" data-plan-edit="${escapePlanText(plan.id)}" aria-label="계획 수정">수정</button><button type="button" data-plan-end="${escapePlanText(plan.id)}" aria-label="계획 종료">종료</button></div></div><p class="plan-card-meta">${plan.environment==='indoor'?'실내':'실외'} · 예상 ${Number(plan.durationMinutes)||0}분</p>${plan.note?`<p class="plan-card-note">${escapePlanText(plan.note)}</p>`:''}</article>`).join(''):'<p class="plan-empty">아직 예정된 계획이 없어요. GPT 코칭에서 정한 다음 운동을 적어보세요.</p>';
+    }
     function renderRideCalendar(){const recordYears=records.map(record=>parseDate(record.date).getFullYear()).filter(Number.isFinite);const currentYear=today.getFullYear();const firstYear=Math.min(currentYear-10,...recordYears);const lastYear=Math.max(currentYear+1,...recordYears);const yearSelect=document.querySelector('#calendar-year');yearSelect.innerHTML=Array.from({length:lastYear-firstYear+1},(_,index)=>firstYear+index).map(year=>`<option value="${year}"${year===calendarMonth.getFullYear()?' selected':''}>${year}년</option>`).join('');const monthSelect=document.querySelector('#calendar-month');monthSelect.innerHTML=Array.from({length:12},(_,index)=>`<option value="${index}"${index===calendarMonth.getMonth()?' selected':''}>${index+1}월</option>`).join('');const first=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1);const cursor=new Date(first);cursor.setDate(1-first.getDay());document.querySelector('#calendar-grid').innerHTML=Array.from({length:42},()=>{const date=new Date(cursor);cursor.setDate(cursor.getDate()+1);const key=calendarKey(date);const outside=date.getMonth()!==calendarMonth.getMonth();const selected=key===calendarDraft.start||key===calendarDraft.end;const inRange=calendarDraft.start&&calendarDraft.end&&key>calendarDraft.start&&key<calendarDraft.end;return `<button class="calendar-day${outside?' outside':''}${inRange?' in-range':''}${selected?' selected':''}" type="button" data-calendar-date="${key}" aria-label="${formatFullDate(date)}">${date.getDate()}</button>`;}).join('');const label=calendarDraft.start?calendarDraft.end?`${formatFullDate(parseDate(calendarDraft.start))} — ${formatFullDate(parseDate(calendarDraft.end))}`:`${formatFullDate(parseDate(calendarDraft.start))} · 종료일을 선택하세요`:'기간을 선택해 주세요';document.querySelector('#calendar-selection').textContent=label;}
     function automaticRideIcon(record){
       const title=String(record.title||'').toLowerCase();
@@ -766,7 +836,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
       finally{stravaSyncing=false;stravaSyncAbortController=null;const currentFullButton=document.querySelector('#sync-strava');const currentNewButton=document.querySelector('#sync-strava-new');currentFullButton.disabled=false;currentNewButton.disabled=false;document.querySelector('#stop-strava-sync').hidden=true;currentFullButton.textContent='전체 동기화';currentNewButton.textContent='새 기록 가져오기';}
     }
     async function continueStravaDetailBackfill(){if(stravaSyncing||!stravaSyncKey)return;const pending=[...records].sort((a,b)=>b.date.localeCompare(a.date)).filter(needsStravaDetail).slice(0,40);if(!pending.length){localStorage.removeItem(stravaDetailBackfillStorageKey);setStravaStatus('러닝·라이딩 전체 활동과 상세 분석이 모두 최신 상태예요.');return;}stravaSyncing=true;stravaSyncAbortController=new AbortController();const fullButton=document.querySelector('#sync-strava');const newButton=document.querySelector('#sync-strava-new');const stopButton=document.querySelector('#stop-strava-sync');fullButton.disabled=true;newButton.disabled=true;stopButton.hidden=false;newButton.textContent='상세 분석 중…';try{for(let index=0;index<pending.length;index++){const record=pending[index];setStravaStatus(`${isRun(record)?'러닝':'라이딩'} 저장 데이터 복원 중… ${index+1}/${pending.length}`);const data=await fetchActivityDetail(record);isRun(record)?renderRunActivityAnalysis(data,record):renderActivityAnalysis(data,record);}aggregateAutomaticPowerProfile();save();const remaining=records.filter(needsStravaDetail).length;if(remaining)scheduleStravaDetailBackfill(Date.now()+15*60*1000);else{localStorage.removeItem(stravaDetailBackfillStorageKey);setStravaStatus('러닝·라이딩 전체 활동과 상세 분석이 모두 최신 상태예요.');}}catch(error){setStravaStatus(error?.name==='AbortError'?'상세 분석을 정지했어요. 완료된 기록은 저장됐습니다.':error.message||'상세 분석에 실패했습니다.');}finally{stravaSyncing=false;stravaSyncAbortController=null;fullButton.disabled=false;newButton.disabled=false;stopButton.hidden=true;fullButton.textContent='전체 동기화';newButton.textContent='새 기록 가져오기';renderAll();}}
-    function showPage(page){document.querySelector('#home-page').hidden=page!=='home';document.querySelector('#rides-page').hidden=page!=='rides';document.querySelector('#runs-page').hidden=page!=='runs';document.querySelector('#settings-page').hidden=page!=='settings';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));}
+    function showPage(page){document.querySelector('#home-page').hidden=page!=='home';document.querySelector('#rides-page').hidden=page!=='rides';document.querySelector('#runs-page').hidden=page!=='runs';document.querySelector('#plans-page').hidden=page!=='plans';document.querySelector('#settings-page').hidden=page!=='settings';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='plans')renderPlans();}
     document.querySelectorAll('[data-period]').forEach(b=>b.addEventListener('click',()=>{activePeriod=b.dataset.period;renderHome();}));
     document.querySelector('.period-summary-toggle').addEventListener('click',event=>{const button=event.target.closest('[data-period-scope]');if(!button)return;activePeriodScope=button.dataset.periodScope;renderHome();});
     document.querySelector('.legend').addEventListener('click',event=>{const button=event.target.closest('[data-chart-metric]');if(!button)return;const metric=button.dataset.chartMetric;if(visibleChartMetrics.has(metric))visibleChartMetrics.delete(metric);else visibleChartMetrics.add(metric);renderChart();});
@@ -774,6 +844,41 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     document.querySelector('#rides-page .ride-summary-toggle').addEventListener('click',event=>{const button=event.target.closest('[data-summary-scope]');if(!button)return;rideSummaryScope=button.dataset.summaryScope;renderAll();});
     document.querySelector('#run-summary-toggle').addEventListener('click',event=>{const button=event.target.closest('[data-run-scope]');if(!button)return;runSummaryScope=button.dataset.runScope;renderRuns();});
     document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+    let editingPlanId=null;
+    const planDialog=document.querySelector('#plan-dialog');
+    const planForm=document.querySelector('#plan-form');
+    const resizePlanNote=()=>{const note=planForm.elements.note;note.style.height='auto';note.style.height=`${Math.max(110,note.scrollHeight)}px`;};
+    function openPlanEditor(plan=null){
+      editingPlanId=plan?.id||null;
+      planForm.reset();
+      planForm.elements.sport.value=plan?.sport||'ride';
+      planForm.elements.date.value=plan?.date||selectedPlanDate||calendarKey(new Date());
+      planForm.elements.environment.value=plan?.environment||'outdoor';
+      planForm.elements.durationMinutes.value=plan?.durationMinutes||'';
+      planForm.elements.note.value=plan?.note||'';
+      document.querySelector('#plan-form-title').textContent=plan?'계획 수정':'계획 추가';
+      planDialog.showModal();resizePlanNote();
+    }
+    document.querySelector('#plan-prev-month').addEventListener('click',()=>{planMonth=new Date(planMonth.getFullYear(),planMonth.getMonth()-1,1);selectedPlanDate=calendarKey(planMonth);renderPlans();});
+    document.querySelector('#plan-next-month').addEventListener('click',()=>{planMonth=new Date(planMonth.getFullYear(),planMonth.getMonth()+1,1);selectedPlanDate=calendarKey(planMonth);renderPlans();});
+    document.querySelector('#plan-calendar-days').addEventListener('click',event=>{const day=event.target.closest('[data-plan-date]');if(!day)return;selectedPlanDate=day.dataset.planDate;const date=parseDate(selectedPlanDate);planMonth=new Date(date.getFullYear(),date.getMonth(),1);renderPlans();});
+    document.querySelector('#open-plan-add').addEventListener('click',()=>openPlanEditor());
+    document.querySelector('#cancel-plan').addEventListener('click',()=>planDialog.close());
+    planForm.elements.note.addEventListener('input',resizePlanNote);
+    planForm.addEventListener('submit',event=>{
+      event.preventDefault();const form=new FormData(planForm);const date=String(form.get('date')||'');const durationMinutes=Number(form.get('durationMinutes'));
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isInteger(durationMinutes)||durationMinutes<1||durationMinutes>1440)return;
+      const previous=plans.find(plan=>plan.id===editingPlanId);
+      const plan={id:previous?.id||`plan-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,sport:form.get('sport')==='run'?'run':'ride',date,environment:form.get('environment')==='indoor'?'indoor':'outdoor',durationMinutes,note:String(form.get('note')||'').trim(),status:'active',createdAt:previous?.createdAt||new Date().toISOString()};
+      if(previous)plans=plans.map(item=>item.id===previous.id?plan:item);else plans.push(plan);
+      localStorage.setItem(plansStorageKey,JSON.stringify(plans));selectedPlanDate=date;const scheduled=parseDate(date);planMonth=new Date(scheduled.getFullYear(),scheduled.getMonth(),1);planDialog.close();renderPlans();
+    });
+    document.querySelector('#plan-list').addEventListener('click',event=>{
+      const edit=event.target.closest('[data-plan-edit]');if(edit){const plan=plans.find(item=>item.id===edit.dataset.planEdit);if(plan)openPlanEditor(plan);return;}
+      const end=event.target.closest('[data-plan-end]');if(!end||!confirm('이 계획을 종료하고 목록에서 제거할까요?'))return;
+      plans=plans.map(plan=>plan.id===end.dataset.planEnd?{...plan,status:'ended',endedAt:new Date().toISOString()}:plan);
+      localStorage.setItem(plansStorageKey,JSON.stringify(plans));renderPlans();
+    });
     document.querySelector('#weekly-chart').addEventListener('click',event=>{const rect=event.currentTarget.getBoundingClientRect();const chartX=(event.clientX-rect.left)/rect.width*340;const last=Math.max(chartData.labels.length-1,0);const index=Math.max(0,Math.min(last,Math.round((chartX-38)/(282/Math.max(last,1)))));showChartValues(index);});
     document.querySelector('#stream-tabs').addEventListener('click',event=>{const button=event.target.closest('[data-stream]');if(!button)return;const name=button.dataset.stream;if(visibleStreams.has(name))visibleStreams.delete(name);else visibleStreams.add(name);renderStreams();});
     document.querySelector('#rides').addEventListener('click',e=>{const b=e.target.closest('[data-ride-id]');if(b)showDetail(b.dataset.rideId);});
@@ -818,9 +923,9 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     document.querySelector('#run-goal-form').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);goals={...goals,runWeeklyDistance:Number(f.get('runWeeklyDistance')),runMonthlyDistance:Number(f.get('runMonthlyDistance')),runAnnualDistance:Number(f.get('runAnnualDistance'))};saveGoals('#run-goals-form');});
     document.querySelector('#export-coach-data').addEventListener('click',downloadCoachExport);
     const backupDetailSummary=items=>{const strava=items.filter(record=>record.stravaId);const detailed=strava.filter(record=>record.activityStreams&&Object.values(record.activityStreams).some(values=>Array.isArray(values)&&values.length>1));return {recordCount:items.length,stravaRecordCount:strava.length,detailedRecordCount:detailed.length,pendingDetailCount:strava.length-detailed.length};};
-    document.querySelector('#export-data').addEventListener('click',()=>{save();const backupRecords=records.map(record=>record.activityStreams?{...record,activityStreams:downsampleActivityStreams(record.activityStreams)}:{...record});const detailSummary=backupDetailSummary(backupRecords);const backup={version:3,exportedAt:new Date().toISOString(),includesDetailedActivityData:true,detailSummary,records:backupRecords,goals,playerData};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`ride-week-complete-backup-${iso(today)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);setStravaStatus(detailSummary.pendingDetailCount?`상세 백업 완료 · 전체 ${detailSummary.recordCount}개 · 그래프 포함 ${detailSummary.detailedRecordCount}개 · 아직 상세 동기화가 필요한 기록 ${detailSummary.pendingDetailCount}개`:`전체 기록 ${detailSummary.recordCount}개와 상세 데이터를 모두 백업했어요.`);});
+    document.querySelector('#export-data').addEventListener('click',()=>{save();const backupRecords=records.map(record=>record.activityStreams?{...record,activityStreams:downsampleActivityStreams(record.activityStreams)}:{...record});const detailSummary=backupDetailSummary(backupRecords);const backup={version:4,exportedAt:new Date().toISOString(),includesDetailedActivityData:true,detailSummary,records:backupRecords,goals,playerData,plans};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`ride-week-complete-backup-${iso(today)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);setStravaStatus(detailSummary.pendingDetailCount?`상세 백업 완료 · 전체 ${detailSummary.recordCount}개 · 그래프 포함 ${detailSummary.detailedRecordCount}개 · 아직 상세 동기화가 필요한 기록 ${detailSummary.pendingDetailCount}개`:`전체 기록 ${detailSummary.recordCount}개와 상세 데이터를 모두 백업했어요.`);});
     document.querySelector('#import-data').addEventListener('click',()=>document.querySelector('#import-file').click());
-    document.querySelector('#import-file').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const backup=JSON.parse(reader.result);if(!Array.isArray(backup.records))throw new Error('invalid');if(!confirm('현재 기록을 백업 파일의 내용으로 교체할까요?'))return;records=backup.records.map(record=>record.activityStreams?{...record,activityStreams:downsampleActivityStreams(record.activityStreams)}:record);goals={...goals,...(backup.goals||{})};playerData={...playerData,...(backup.playerData||{})};ftp=Number(playerData.ftp)||201;playerData.ftpHistory=normalizedFtpHistory(playerData.ftpHistory,ftp);playerData.profileHistory=normalizedProfileHistory(playerData.profileHistory,playerData);localStorage.setItem(storageKey,JSON.stringify(records));localStorage.setItem(goalsStorageKey,JSON.stringify(goals));localStorage.setItem(playerDataStorageKey,JSON.stringify(playerData));localStorage.setItem(ftpStorageKey,String(ftp));markSettingsChanged();renderAll();syncCloudSettings();const detailSummary=backupDetailSummary(records);document.querySelector('#detail-title').textContent='복원 완료';document.querySelector('#detail-text').textContent=detailSummary.pendingDetailCount?`${records.length}개의 기록을 복원했어요. 그래프가 없는 예전 백업 기록 ${detailSummary.pendingDetailCount}개는 전체 동기화로 채울 수 있어요.`:`${records.length}개의 기록과 상세 데이터를 모두 복원했어요. 다시 계산하거나 전체 동기화할 필요가 없어요.`;document.querySelector('#detail-overview').innerHTML='';document.querySelector('#edit-detail').hidden=true;detail.showModal();}catch{alert('Ride Week에서 만든 올바른 백업 파일을 선택해 주세요.');}finally{e.target.value='';}};reader.readAsText(file);});
+    document.querySelector('#import-file').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const backup=JSON.parse(reader.result);if(!Array.isArray(backup.records))throw new Error('invalid');if(!confirm('현재 기록을 백업 파일의 내용으로 교체할까요?'))return;records=backup.records.map(record=>record.activityStreams?{...record,activityStreams:downsampleActivityStreams(record.activityStreams)}:record);goals={...goals,...(backup.goals||{})};playerData={...playerData,...(backup.playerData||{})};ftp=Number(playerData.ftp)||201;playerData.ftpHistory=normalizedFtpHistory(playerData.ftpHistory,ftp);playerData.profileHistory=normalizedProfileHistory(playerData.profileHistory,playerData);if(Array.isArray(backup.plans)){plans=backup.plans.filter(plan=>plan&&typeof plan.id==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(plan.date||''));localStorage.setItem(plansStorageKey,JSON.stringify(plans));}localStorage.setItem(storageKey,JSON.stringify(records));localStorage.setItem(goalsStorageKey,JSON.stringify(goals));localStorage.setItem(playerDataStorageKey,JSON.stringify(playerData));localStorage.setItem(ftpStorageKey,String(ftp));markSettingsChanged();renderAll();renderPlans();syncCloudSettings();const detailSummary=backupDetailSummary(records);document.querySelector('#detail-title').textContent='복원 완료';document.querySelector('#detail-text').textContent=detailSummary.pendingDetailCount?`${records.length}개의 기록을 복원했어요. 그래프가 없는 예전 백업 기록 ${detailSummary.pendingDetailCount}개는 전체 동기화로 채울 수 있어요.`:`${records.length}개의 기록과 상세 데이터를 모두 복원했어요. 다시 계산하거나 전체 동기화할 필요가 없어요.`;document.querySelector('#detail-overview').innerHTML='';document.querySelector('#edit-detail').hidden=true;detail.showModal();}catch{alert('Ride Week에서 만든 올바른 백업 파일을 선택해 주세요.');}finally{e.target.value='';}};reader.readAsText(file);});
     document.querySelector('#save-strava-key').addEventListener('click',()=>{const input=document.querySelector('#strava-key');const value=input.value.trim();if(!value){setStravaStatus('동기화 키를 입력해 주세요.');return;}stravaSyncKey=value;localStorage.setItem(stravaKeyStorageKey,value);lockStravaKey();setStravaStatus('동기화 키를 이 기기에 저장했어요. 필요하면 자물쇠를 눌러 바꿀 수 있어요.');syncCloudSettings();});
     document.querySelector('#toggle-strava-key').addEventListener('click',unlockStravaKey);
     document.querySelector('#connect-strava').addEventListener('click',()=>{if(!stravaSyncKey){setStravaStatus('동기화 키를 먼저 입력하고 저장해 주세요.');return;}location.href=`${stravaWorkerUrl}/auth/strava?key=${encodeURIComponent(stravaSyncKey)}`;});
