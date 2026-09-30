@@ -460,7 +460,7 @@
     <section class="record-list" id="run-record-list" aria-label="러닝 전체 목록"></section>
   </main>
   <main class="app page" id="plans-page" hidden>
-    <header class="page-header"><div><h1>일정</h1><p class="date">코칭받은 운동 일정을 가볍게 적어두세요</p><p class="date" id="plan-sync-status" aria-live="polite"></p></div></header>
+    <header class="page-header"><div><h1>일정</h1><p class="date">코칭받은 운동 일정을 가볍게 적어두세요</p></div></header>
     <section class="plan-calendar" aria-label="운동 및 예정 일정 달력">
       <div class="calendar-head"><button type="button" id="plan-prev-month" aria-label="이전 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><div class="plan-month-label" id="plan-month-label"></div><button type="button" id="plan-today" aria-label="오늘로 이동">오늘</button><button type="button" id="plan-next-month" aria-label="다음 달"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
       <div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
@@ -674,8 +674,9 @@
     const runFormDialog=document.querySelector('#run-form-dialog');
     let editingId=null;
     const parseDate=value=>new Date(`${value}T00:00:00`);
-    const formatDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
-    const formatFullDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
+    const weekday=date=>['일','월','화','수','목','금','토'][date.getDay()];
+    const formatDate=date=>`${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일(${weekday(date)})`;
+    const formatFullDate=formatDate;
     const calendarKey=date=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
     const escapePlanText=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     const activePlans=()=>plans.filter(plan=>plan.status!=='ended'&&/^\d{4}-\d{2}-\d{2}$/.test(plan.date||''));
@@ -743,7 +744,7 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     function renderPowerZones(summary,title){const totalSeconds=summary.zones.reduce((sum,value)=>sum+value,0);document.querySelector('#power-zones-title').textContent=`${title} 파워존`;document.querySelector('#power-zones-total').textContent=totalSeconds?`총 ${formatZoneTime(totalSeconds)} · FTP ${ftp}W`:`FTP ${ftp}W 기준`;if(!totalSeconds){document.querySelector('#power-zones-list').innerHTML='<p class="power-zone-empty">파워 데이터가 있는 Strava 라이딩을 동기화하면 존별 시간이 표시됩니다.</p>';return;}const zones=summary.zones.map((seconds,index)=>{const [label,min,max,color]=zoneDefinitions[index];const range=max===Infinity?`${Math.round(min*ftp)}W+`:`${Math.round(min*ftp)}–${Math.round(max*ftp)}W`;const percent=seconds/totalSeconds*100;return {label,range,color,seconds,percent};});const bar=zones.map(zone=>`<i class="power-zone-segment" style="width:${zone.percent}%;background:${zone.color}" title="${zone.label} · ${zone.percent.toFixed(1)}% · ${formatZoneTime(zone.seconds)}" aria-hidden="true"></i>`).join('');const legend=zones.map(zone=>`<div class="power-zone-legend"><b class="power-zone-label"><i style="background:${zone.color}"></i>${zone.label}</b><span>${zone.range} · ${zone.percent.toFixed(1)}%</span><time>${formatZoneTime(zone.seconds)}</time></div>`).join('');document.querySelector('#power-zones-list').innerHTML=`<div class="power-zone-stack" role="img" aria-label="${zones.map(zone=>`${zone.label} ${zone.percent.toFixed(1)}퍼센트`).join(', ')}">${bar}</div>${legend}`;}
     function renderHeartZones(items,title){const powered=items.filter(item=>Array.isArray(item.heartRateMetrics?.zones));const zones=Array(5).fill(0);powered.forEach(item=>item.heartRateMetrics.zones.forEach((value,index)=>zones[index]+=Number(value)||0));const totalSeconds=zones.reduce((sum,value)=>sum+value,0);const maxHeartRate=Number(playerData.maxHeartRate)||null;document.querySelector('#heart-zones-title').textContent=`${title} 심박존`;document.querySelector('#heart-zones-total').textContent=maxHeartRate?`최대심박 ${maxHeartRate}bpm 기준`:'기록별 최대심박 기준';if(!totalSeconds){document.querySelector('#heart-zones-list').innerHTML='<p class="power-zone-empty">심박 데이터가 있는 최근 라이딩을 동기화하면 존별 시간이 표시됩니다.</p>';return;}const display=zones.map((seconds,index)=>{const [label,min,max,color]=heartZoneDefinitions[index];const range=maxHeartRate?(max===Infinity?`${Math.round(min*maxHeartRate)}bpm+`:`${Math.round(min*maxHeartRate)}–${Math.round(max*maxHeartRate)}bpm`):`${Math.round(min*100)}–${Number.isFinite(max)?Math.round(max*100):100}%`;return {label,range,color,seconds,percent:seconds/totalSeconds*100};});const bar=display.map(zone=>`<i class="power-zone-segment" style="width:${zone.percent}%;background:${zone.color}" aria-hidden="true"></i>`).join('');const legend=display.map(zone=>`<div class="power-zone-legend"><b class="power-zone-label"><i style="background:${zone.color}"></i>${zone.label}</b><span>${zone.range} · ${zone.percent.toFixed(1)}%</span><time>${formatZoneTime(zone.seconds)}</time></div>`).join('');document.querySelector('#heart-zones-list').innerHTML=`<div class="power-zone-stack" role="img" aria-label="${display.map(zone=>`${zone.label} ${zone.percent.toFixed(1)}퍼센트`).join(', ')}">${bar}</div>${legend}`;}
     const sorted=()=>cyclingRecords().sort((a,b)=>b.date.localeCompare(a.date));
-    const labelFor=record=>{const date=parseDate(record.date);return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;};
+    const labelFor=record=>formatFullDate(parseDate(record.date));
     function renderDetailOverview(record){const distance=Number(record.stravaDistanceKm??record.distance).toFixed(2);document.querySelector('#detail-overview').innerHTML=`<div><b>${distance}km</b><span>Distance</span></div><div><b>${formatMovingTime(record)}</b><span>Moving Time</span></div><div><b>${record.elevation.toLocaleString()}m</b><span>Elevation</span></div>`;}
     const displayAverageSpeed=record=>{const stored=Number(record.averageSpeedKph);return stored>0?stored:record.distance>0&&record.duration>0?record.distance/(record.duration/60):null;};
     const paceSeconds=record=>Number(record.stravaAveragePaceSeconds??record.averagePaceSeconds)||null;
@@ -824,13 +825,13 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     const planVersion=plan=>Date.parse(plan.updatedAt||plan.endedAt||plan.createdAt||'')||0;
     const mergePlans=(first,second)=>{const byId=new Map();[...first,...second].forEach(plan=>{if(!plan||typeof plan.id!=='string'||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(plan.date||''))return;const old=byId.get(plan.id);if(!old||planVersion(plan)>planVersion(old))byId.set(plan.id,plan);});return [...byId.values()];};
     const planSignature=items=>JSON.stringify([...items].sort((a,b)=>a.id.localeCompare(b.id)));
-    const setPlanSyncStatus=message=>{document.querySelector('#plan-sync-status').textContent=message;};
     let plansSyncing=false,plansSyncPending=false;
     async function syncCloudPlans(){
-      if(!stravaSyncKey){setPlanSyncStatus('기기 간 연동: 설정에서 동기화 키를 저장해 주세요');return;}
+      if(!stravaSyncKey)return;
       if(plansSyncing){plansSyncPending=true;return;}
-      plansSyncing=true;setPlanSyncStatus('일정 동기화 중…');
+      plansSyncing=true;
       try{
+        const before=planSignature(plans);
         const headers={'x-ride-week-key':stravaSyncKey};
         const response=await fetch(`${stravaWorkerUrl}/api/plans`,{headers});
         const data=await response.json();
@@ -842,8 +843,8 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
           if(!savedResponse.ok||!Array.isArray(saved.plans))throw new Error(saved.error||'일정을 저장하지 못했습니다.');
           plans=mergePlans(plans,saved.plans);
         }else plans=merged;
-        localStorage.setItem(plansStorageKey,JSON.stringify(plans));renderPlans();setPlanSyncStatus('다른 기기와 일정 연동됨');
-      }catch(error){setPlanSyncStatus(`일정 연동 실패 · 이 기기에는 저장됨 (${error.message})`);}
+        if(planSignature(plans)!==before){localStorage.setItem(plansStorageKey,JSON.stringify(plans));renderPlans();}
+      }catch(error){console.warn('일정 동기화:',error.message);}
       finally{plansSyncing=false;if(plansSyncPending){plansSyncPending=false;syncCloudPlans();}}
     }
     let settingsSyncing=false;
