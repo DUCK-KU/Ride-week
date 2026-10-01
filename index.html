@@ -447,8 +447,10 @@
     .ride-week-head small { white-space:nowrap; }
     .ride-week-summary { color:var(--text); flex:none; }
     .ride-week-summary > span { display:block; white-space:nowrap; }
-    .sport-profile-cards .player-snapshot-copy { align-items:flex-end; text-align:right; }
-    .sport-profile-cards .player-snapshot-copy b { text-align:right; }
+    .sport-profile-cards .player-snapshot-item { justify-content:center; gap:10px; }
+    .sport-profile-cards .player-snapshot-copy { width:auto; flex:0 1 auto; align-items:flex-start; text-align:left; }
+    .sport-profile-cards .player-snapshot-copy b { text-align:left; overflow-wrap:normal; }
+    @media(max-width:380px) { .sport-profile-cards .player-snapshot-item { gap:7px; padding-inline:6px; } }
     /* Surface colors stay neutral; data visualization palettes remain unchanged. */
     .goal { background:var(--blue-soft); color:var(--ink); }
     .goal-label { color:var(--muted); }
