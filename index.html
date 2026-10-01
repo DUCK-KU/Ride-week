@@ -408,6 +408,9 @@
     .sport-profile-cards { margin:14px 0; }
     .sport-profile-cards .player-snapshot { grid-template-columns:repeat(3,minmax(0,1fr)); }
     .sport-profile-cards .player-snapshot-item { flex-wrap:wrap; padding:12px 10px; }
+    .sport-profile-cards .player-snapshot-copy { flex-direction:column; align-items:flex-start; gap:6px; }
+    .sport-profile-cards .player-snapshot-copy b { flex:none; overflow:visible; font-size:13px; }
+    @media(max-width:420px) { .goal-label { font-size:11px; white-space:nowrap; } }
     .sport-profile-cards .running-prs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
     .sport-profile-cards .running-pr { min-height:46px; padding:12px 10px; }
     @media(max-width:380px) { .workout-summary-item { gap:5px; padding:12px 8px; font-size:10px; } .workout-summary-item b { font-size:12px; } .workout-summary .summary-symbol { width:24px; height:24px; } }
