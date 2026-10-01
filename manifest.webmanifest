@@ -3,7 +3,7 @@
   "short_name": "Ride Week",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#C3C6CC",
-  "theme_color": "#19418F",
+  "background_color": "#E6E7EB",
+  "theme_color": "#0D3380",
   "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
 }
