@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon.svg">
   <title>Ride Week</title>
   <style>
-    :root { color-scheme: light; --ink:#1d1d1f; --muted:#7b7f86; --paper:#f4f5f7; --green:#0a84ff; --deep:#6B808D; --line:#e2e4e8; --soft:#eef0f3; --blue-soft:#e8f2ff; --success:#16845b; }
+    :root { color-scheme: light; --ink:#1d1d1f; --muted:#626d77; --paper:#f4f5f7; --green:#0a84ff; --deep:#6B808D; --text:#435864; --line:#e2e4e8; --soft:#eef0f3; --blue-soft:#e8f2ff; --success:#16845b; }
     * { box-sizing:border-box; }
     html { scrollbar-gutter:stable; }
     body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
@@ -38,7 +38,7 @@
     .player-snapshot-icon { width:27px; height:27px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); }
     .player-snapshot-icon svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .player-snapshot-copy { min-width:0; width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .player-snapshot-copy b, .running-pr b { display:block; min-width:0; flex:0 1 auto; overflow:hidden; color:var(--deep); font-size:13px; letter-spacing:-.2px; line-height:1.2; text-align:right; text-overflow:ellipsis; white-space:nowrap; }
+    .player-snapshot-copy b, .running-pr b { display:block; min-width:0; flex:0 1 auto; overflow:hidden; color:var(--text); font-size:13px; letter-spacing:-.2px; line-height:1.2; text-align:right; text-overflow:ellipsis; white-space:nowrap; }
     .player-snapshot-copy b { order:2; }
     .player-snapshot-copy > span, .running-pr-label > span { display:block; margin:0; color:var(--muted); font-size:10px; line-height:1.2; white-space:nowrap; }
     .player-snapshot-copy > span { order:1; }
@@ -58,19 +58,19 @@
     .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
     .training-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:8px; }
     .training-metric { padding:13px 8px; border:0; border-radius:18px; background:#fff; text-align:center; }
-    .training-metric strong { display:block; color:var(--deep); font-size:20px; line-height:1.15; }
+    .training-metric strong { display:block; color:var(--text); font-size:20px; line-height:1.15; }
     .training-metric small { display:block; margin-top:5px; color:var(--muted); font-size:11px; }
     .power-zones { margin-top:12px; padding:15px; border:0; border-radius:18px; background:#fff; }
     .power-zones-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:12px; }
-    .power-zones-head strong { color:var(--deep); font-size:14px; }
+    .power-zones-head strong { color:var(--text); font-size:14px; }
     .power-zones-head span { color:var(--muted); font-size:11px; }
     .power-zone-stack { display:flex; width:100%; height:18px; overflow:hidden; border-radius:999px; background:#edf1ee; box-shadow:inset 0 0 0 1px #00000008; }
     .power-zone-segment { height:100%; min-width:0; transition:width .25s ease; }
     .power-zone-legend { display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:9px; margin-top:9px; color:var(--muted); font-size:11px; }
-    .power-zone-label { display:flex; align-items:center; gap:6px; color:var(--deep); font-weight:800; }
+    .power-zone-label { display:flex; align-items:center; gap:6px; color:var(--text); font-weight:800; }
     .power-zone-label i { width:8px; height:8px; border-radius:50%; }
     .power-zone-legend span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .power-zone-legend time { color:var(--deep); font-variant-numeric:tabular-nums; font-weight:700; text-align:right; }
+    .power-zone-legend time { color:var(--text); font-variant-numeric:tabular-nums; font-weight:700; text-align:right; }
     .power-zone-empty { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
     .stat { min-width:0; padding:12px 4px; border-radius:18px; background:white; text-align:center; }
     .stat .icon { display:grid; height:19px; place-items:center; color:var(--green); }
@@ -110,32 +110,32 @@
     dialog p { color:var(--muted); line-height:1.55; }
     dialog button { width:100%; padding:12px; border:0; border-radius:13px; background:var(--deep); color:white; font-weight:750; }
     dialog .dialog-close-x { position:absolute; z-index:3; top:20px; right:16px; width:32px; height:32px; display:grid; place-items:center; padding:0; border-radius:50%; background:#edf2ee; color:#536158; font-size:20px; font-weight:500; line-height:1; transition:background .18s ease,color .18s ease,transform .18s ease; }
-    dialog .dialog-close-x:hover { background:#dfeae3; color:var(--deep); transform:rotate(4deg); }
+    dialog .dialog-close-x:hover { background:#dfeae3; color:var(--text); transform:rotate(4deg); }
     .detail-overview { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin:12px 0 0; }
     .detail-overview div { padding:10px 5px; border-radius:12px; background:#f2f7f3; text-align:center; }
-    .detail-overview b { display:block; color:var(--deep); font-size:14px; }
+    .detail-overview b { display:block; color:var(--text); font-size:14px; }
     .detail-overview span { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
     .activity-analysis { margin-top:7px; }
     .activity-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
     .activity-metric { padding:10px 7px; border-radius:12px; background:#f2f7f3; text-align:center; }
-    .activity-metric b { display:block; color:var(--deep); font-size:14px; }
+    .activity-metric b { display:block; color:var(--text); font-size:14px; }
     .activity-metric span { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
     .activity-zone-charts { display:grid; gap:10px; margin:14px 0; }
     .activity-zone-card { padding:12px; border:0; border-radius:18px; background:#fff; }
     .activity-zone-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
-    .activity-zone-head strong { color:var(--deep); font-size:12px; }
+    .activity-zone-head strong { color:var(--text); font-size:12px; }
     .activity-zone-head small { color:var(--muted); font-size:10px; }
     .activity-zone-bar { display:flex; width:100%; height:24px; overflow:hidden; border-radius:7px; background:#e6ebe7; }
     .activity-zone-bar i { height:100%; min-width:0; }
     .activity-zone-legend { display:grid; grid-template-columns:34px minmax(0,1fr) auto; align-items:center; gap:7px; margin-top:7px; color:var(--muted); font-size:10px; }
-    .activity-zone-legend b { color:var(--deep); font-size:10px; }
+    .activity-zone-legend b { color:var(--text); font-size:10px; }
     .activity-zone-legend span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .activity-zone-legend time { color:var(--deep); font-weight:750; font-variant-numeric:tabular-nums; }
+    .activity-zone-legend time { color:var(--text); font-weight:750; font-variant-numeric:tabular-nums; }
     .activity-insight { margin:13px 0; padding:11px 12px; border-radius:12px; background:#eef6f1; color:#315a49 !important; font-size:12px; line-height:1.5; }
     .activity-note { margin:10px 0 14px; padding:10px 12px; border-radius:12px; background:#f2f7f3; color:#526158; font-size:11px; line-height:1.5; white-space:pre-wrap; }
     .activity-note::before { display:block; margin-bottom:3px; color:#819087; font-size:9px; font-weight:800; content:"MEMO"; }
     .splits-card { margin:14px 0; overflow:hidden; border-radius:14px; background:#f2f7f3; }
-    .splits-card h4 { margin:0; padding:11px 12px; color:var(--deep); font-size:13px; }
+    .splits-card h4 { margin:0; padding:11px 12px; color:var(--text); font-size:13px; }
     .splits-table { width:100%; border-collapse:collapse; font-size:11px; text-align:center; }
     .splits-table th, .splits-table td { padding:7px 5px; border-top:1px solid #dfe8e2; }
     .splits-table th { color:var(--muted); font-size:9px; }
@@ -155,20 +155,20 @@
     .page-header h1 { font-size:27px; }
     .page-actions { display:flex; gap:7px; }
     .add-button { padding:10px 12px; border:0; border-radius:12px; background:var(--deep); color:white; font-size:12px; font-weight:750; white-space:nowrap; }
-    .find-button { padding:10px 11px; border:0; border-radius:12px; background:#edf2ee; color:var(--deep); font-size:12px; font-weight:750; white-space:nowrap; }
+    .find-button { padding:10px 11px; border:0; border-radius:12px; background:#edf2ee; color:var(--text); font-size:12px; font-weight:750; white-space:nowrap; }
     .record-list { width:100%; min-width:0; display:grid; gap:10px; margin-top:18px; overflow:hidden; }
     .ride-totals { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; padding-bottom:18px; border-bottom:1px solid var(--line); }
     .ride-summary-toggle { display:flex; gap:7px; margin:12px 0; }
     .ride-summary-toggle button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-size:11px; font-weight:750; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
     .ride-summary-toggle button.active { border-color:var(--deep); background:var(--deep); color:#fff; }
     .ride-total { min-width:0; padding:10px 4px; border-radius:18px; background:#fff; text-align:center; }
-    .ride-total b { display:block; overflow:hidden; color:var(--deep); font-size:13px; line-height:1.2; text-overflow:ellipsis; white-space:nowrap; }
+    .ride-total b { display:block; overflow:hidden; color:var(--text); font-size:13px; line-height:1.2; text-overflow:ellipsis; white-space:nowrap; }
     .ride-total span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
     .record-list .ride { position:relative; }
     .ride-week-group { display:grid; gap:9px; }
     .ride-week-group + .ride-week-group { margin-top:14px; padding-top:18px; border-top:1px solid var(--line); }
     .ride-week-head { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:0 3px; }
-    .ride-week-head strong { color:var(--deep); font-size:15px; }
+    .ride-week-head strong { color:var(--text); font-size:15px; }
     .ride-week-head small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
     .ride-week-summary { color:#526259; font-size:10px; font-weight:750; text-align:right; line-height:1.45; }
     .ride-week-rides { display:grid; gap:9px; }
@@ -184,10 +184,10 @@
     .player-dialog input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
     .player-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .player-note { margin:0 0 2px; color:var(--muted); font-size:11px; }
-    .player-update-date { margin:0; padding:8px 10px; border-radius:10px; background:var(--blue-soft); color:var(--deep); font-size:10px; font-weight:700; }
+    .player-update-date { margin:0; padding:8px 10px; border-radius:10px; background:var(--blue-soft); color:var(--text); font-size:10px; font-weight:700; }
     .player-tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:4px; border-radius:13px; background:#edf2ee; }
     .player-tabs button { padding:8px; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--muted); font-size:12px; transition:background .18s ease,color .18s ease,border-color .18s ease; }
-    .player-tabs button.active { background:#fff; color:var(--deep); box-shadow:0 2px 8px #173c3114; }
+    .player-tabs button.active { background:#fff; color:var(--text); box-shadow:0 2px 8px #173c3114; }
     .player-panel { display:grid; gap:10px; }
     .player-panel[hidden] { display:none; }
     .power-profile-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
@@ -195,7 +195,7 @@
     .power-profile-grid input { min-width:0; padding:9px 10px; }
     .power-profile-head { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; }
     .power-profile-head div { min-width:0; }
-    .power-profile-head strong { display:block; color:var(--deep); font-size:12px; }
+    .power-profile-head strong { display:block; color:var(--text); font-size:12px; }
     .power-profile-head small, .profile-compare { color:var(--muted); font-size:9px; font-weight:650; line-height:1.35; }
     .profile-compare { display:block; min-width:0; min-height:12px; overflow:hidden; }
     .profile-compare-line { display:flex; align-items:center; gap:5px; }
@@ -231,17 +231,17 @@
     @keyframes detail-refresh-spin { to { transform:rotate(360deg); } }
     #ride-search-form .dialog-actions { grid-template-columns:repeat(3,1fr); }
     .calendar-head { display:grid; grid-template-columns:40px 1fr 40px; align-items:center; margin:8px 0; }
-    .calendar-head button { padding:8px; border-radius:10px; background:#edf2ee; color:var(--deep); }
+    .calendar-head button { padding:8px; border-radius:10px; background:#edf2ee; color:var(--text); }
     .calendar-jump { display:flex; justify-content:center; gap:6px; }
-    .calendar-jump select { width:auto; padding:7px 22px 7px 8px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--deep); font:inherit; font-size:12px; font-weight:750; }
+    .calendar-jump select { width:auto; padding:7px 22px 7px 8px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--text); font:inherit; font-size:12px; font-weight:750; }
     .calendar-weekdays, .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
     .calendar-weekdays span { padding:5px 0; color:var(--muted); font-size:10px; text-align:center; }
     .plan-calendar { margin-top:14px; padding:11px 12px 12px; border-radius:20px; background:#fff; }
     .plan-calendar .calendar-head { grid-template-columns:32px 1fr 40px 32px; margin:0 0 5px; }
-    .plan-calendar .calendar-head button { display:grid; width:32px; height:32px; place-items:center; padding:0; border:0; background:transparent; color:var(--deep); }
+    .plan-calendar .calendar-head button { display:grid; width:32px; height:32px; place-items:center; padding:0; border:0; background:transparent; color:var(--text); }
     .plan-calendar .calendar-head #plan-today { width:40px; color:#0a84ff; font-size:11px; font-weight:800; }
     .plan-calendar .calendar-head button svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
-    .plan-month-label { color:var(--deep); font-size:15px; font-weight:800; text-align:center; }
+    .plan-month-label { color:var(--text); font-size:15px; font-weight:800; text-align:center; }
     .plan-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:1px; }
     .plan-day { display:flex; min-width:0; min-height:40px; flex-direction:column; align-items:center; justify-content:flex-start; gap:3px; padding:4px 1px 2px; border:0; border-radius:10px; background:transparent; color:var(--ink); font-size:12px; }
     .plan-day.outside { color:#a9b0b5; }
@@ -265,12 +265,12 @@
     .plan-list { display:grid; gap:10px; }
     .plan-card { padding:15px; border-radius:18px; background:#fff; }
     .plan-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-    .plan-card-head strong { color:var(--deep); font-size:14px; }
+    .plan-card-head strong { color:var(--text); font-size:14px; }
     .plan-card-sport-dot { display:inline-block; width:9px; height:9px; margin-right:6px; border:2px solid #0a84ff; border-radius:50%; vertical-align:1px; }
     .plan-card-sport-dot.run { border-color:#f4a261; }
     .plan-card-sport-dot.other { border-color:#8d969e; }
     .plan-card-actions { display:flex; flex:none; gap:5px; }
-    .plan-card-actions button { padding:5px 7px; border:0; border-radius:8px; background:var(--soft); color:var(--deep); font-size:11px; font-weight:700; }
+    .plan-card-actions button { padding:5px 7px; border:0; border-radius:8px; background:var(--soft); color:var(--text); font-size:11px; font-weight:700; }
     .plan-card-actions button[data-plan-end] { color:var(--muted); }
     .plan-card-meta { margin:5px 0 0; color:var(--muted); font-size:11px; }
     .plan-card-note { margin:12px 0 0; color:var(--ink); font-size:13px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
@@ -285,7 +285,7 @@
     .calendar-shortcuts button { padding:8px 5px; border:1px solid var(--line); border-radius:999px; background:#fff; color:#456158; font-size:10px; font-weight:750; }
     .empty { margin-top:28px; color:var(--muted); text-align:center; line-height:1.6; }
     @media (hover:hover) {
-      .period button:hover, .scope-toggle button:hover, .ride-summary-toggle button:hover, .legend button:hover, .player-tabs button:hover, .calendar-shortcuts button:hover { background:#dfeae3; color:var(--deep); transform:translateY(-1px); }
+      .period button:hover, .scope-toggle button:hover, .ride-summary-toggle button:hover, .legend button:hover, .player-tabs button:hover, .calendar-shortcuts button:hover { background:#dfeae3; color:var(--text); transform:translateY(-1px); }
       .ride:hover, .settings-action:hover, .goal-setting:hover { background:#f7faf8; }
       .add-button:hover, .find-button:hover, dialog button:hover { filter:brightness(.96); }
     }
@@ -318,7 +318,7 @@
     .strava-buttons #stop-strava-sync { grid-column:1 / -1; background:#4f606b; }
     .strava-status { margin:12px 1px 0 !important; color:#e1e3e7 !important; font-size:12px !important; }
     .coach-share-card { margin-top:24px; padding:18px; border:1px solid #b9d9ff; border-radius:18px; background:#eef6ff; }
-    .coach-share-card h2 { margin:0; color:var(--deep); font-size:18px; }
+    .coach-share-card h2 { margin:0; color:var(--text); font-size:18px; }
     .coach-share-card p { margin:6px 0 15px; color:#626b77; font-size:12px; line-height:1.5; }
     .coach-share-button { width:100%; padding:12px 14px; border:0; border-radius:13px; background:var(--green); color:#fff; font-size:13px; font-weight:800; }
     .sport-switch { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:14px 0 10px; padding:4px; border-radius:14px; background:#edf3ef; }
@@ -335,7 +335,7 @@
     .player-snapshot { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
     .player-snapshot-item { min-height:45px; }
     .running-prs { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
-    .running-pr { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px; border-radius:18px; background:#fff; color:var(--deep); }
+    .running-pr { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px; border-radius:18px; background:#fff; color:var(--text); }
     .running-pr-label { min-width:0; flex:0 0 auto; display:flex; align-items:center; gap:6px; }
     .running-pr-label .pr-crown { width:14px; height:14px; }
     .running-pr b { display:block; flex:none; overflow:visible; font-size:12px; line-height:1.2; white-space:nowrap; }
@@ -407,9 +407,15 @@
     #toggle-training-details[aria-expanded="true"] > svg { transform:rotate(90deg); }
     .sport-profile-cards { margin:14px 0; }
     .sport-profile-cards .player-snapshot { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .sport-profile-cards .player-snapshot-item { flex-wrap:wrap; padding:12px 10px; }
-    .sport-profile-cards .player-snapshot-copy { flex-direction:column; align-items:flex-start; gap:6px; }
-    .sport-profile-cards .player-snapshot-copy b { flex:none; overflow:visible; font-size:13px; }
+    .sport-profile-cards .player-snapshot-item { flex-wrap:nowrap; gap:7px; padding:10px 9px; min-height:54px; }
+    .sport-profile-cards .player-snapshot-copy { flex-direction:column; align-items:flex-start; gap:4px; }
+    .sport-profile-cards .player-snapshot-copy b { flex:none; overflow:visible; font-size:12px; text-align:left; }
+    .sport-profile-cards .player-snapshot-icon { width:22px; height:22px; }
+    .sport-profile-cards .player-snapshot-copy > span { font-size:9px; }
+    #toggle-training-details .dashboard-link-copy > strong { font-size:19px; letter-spacing:-.5px; }
+    #toggle-training-details .summary-symbol svg { stroke-width:2.4; }
+    .nav b svg { flex:none; aspect-ratio:1; overflow:visible; }
+    @media(max-width:380px) { .sport-profile-cards .player-snapshot-item { gap:5px; padding:10px 6px; } .sport-profile-cards .player-snapshot-copy b { font-size:11px; } }
     @media(max-width:420px) { .goal-label { font-size:11px; white-space:nowrap; } }
     .sport-profile-cards .running-prs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
     .sport-profile-cards .running-pr { min-height:46px; padding:12px 10px; }
@@ -429,7 +435,7 @@
       <section class="goal"><div class="goal-label" id="run-goal-label">러닝 | 이번 주 거리 목표</div><div class="goal-value" id="run-goal-value">0 / 20 km</div><div class="bar"><span id="run-progress"></span></div></section>
     </section>
     <h2 id="workout-summary-heading">이번 주 운동 요약</h2>
-    <section class="workout-summary" aria-label="기간 운동 요약"><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M8 7v10M16 7v10"/></svg></span><span>운동 횟수</span><b id="workout-count">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span>총 운동시간</span><b id="workout-duration">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="m6 16 5-9 7 9H6l-3-9h5M13 4h4"/></svg></span><span>라이딩 거리</span><b id="workout-ride-distance">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c4 1 6-2 7-5l3 5 7 3v4H3Z"/></svg></span><span>러닝 거리</span><b id="workout-run-distance">—</b></div></section>
+    <section class="workout-summary" aria-label="기간 운동 요약"><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M8 7v10M16 7v10"/></svg></span><span>운동 횟수</span><b id="workout-count">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span>총 운동시간</span><b id="workout-duration">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3v6.7M12 14.3V21M3 12h6.7M14.3 12H21M5.6 5.6l4.7 4.7M13.7 13.7l4.7 4.7M18.4 5.6l-4.7 4.7M10.3 13.7l-4.7 4.7"/></svg></span><span>라이딩 거리</span><b id="workout-ride-distance">—</b></div><div class="workout-summary-item"><span class="summary-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5c2.8.2 5.2-.8 6.9-4.7l2.1 1 2.5 3.5 5.7 2.5c.8.4 1.2 1 1.2 1.8v2.2H3v-5.8Z"/><path d="M3 17.3v2h18.4v-2M12.1 8.2l-1.5 2.2M14.2 9.7l-1.5 2.1M16.3 10.7l-1.2 2"/></svg></span><span>러닝 거리</span><b id="workout-run-distance">—</b></div></section>
     <h2>훈련 분석</h2>
     <div class="sport-switch" id="trend-sport-switch"><button class="active" type="button" data-home-sport="ride">라이딩</button><button type="button" data-home-sport="run">러닝</button></div><div class="scope-toggle" id="home-scope-toggle" aria-label="표시 기록 유형"><button class="active" type="button" data-trend-scope="all" data-period-scope="all" aria-pressed="true">종합</button><button type="button" data-trend-scope="outdoor" data-period-scope="outdoor" aria-pressed="false">실외</button><button type="button" data-trend-scope="indoor" data-period-scope="indoor" aria-pressed="false">실내</button></div><h2 id="trend-heading">주간 추이</h2>
     <section class="chart" aria-label="요일별 라이딩 거리 그래프">
@@ -530,7 +536,7 @@
     </section>
   </main>
   <nav class="bottom" aria-label="주 메뉴"><div class="nav">
-    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3v6.7M12 14.3V21M3 12h6.7M14.3 12H21M5.6 5.6l4.7 4.7M13.7 13.7l4.7 4.7M18.4 5.6l-4.7 4.7M10.3 13.7l-4.7 4.7"/></svg></b>라이딩</button><button data-page="runs"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5c2.8.2 5.2-.8 6.9-4.7l2.1 1 2.5 3.5 5.7 2.5c.8.4 1.2 1 1.2 1.8v2.2H3v-5.8Z"/><path d="M3 17.3v2h18.4v-2M12.1 8.2l-1.5 2.2M14.2 9.7l-1.5 2.1M16.3 10.7l-1.2 2"/></svg></b>러닝</button><button data-page="plans"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></b>일정</button><button data-page="settings"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.07 14H3v-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-1.56V3h4v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06-.06a1.7 1.7 0 0 0 1.56 1H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg></b>설정</button>
+    <button class="active" data-page="home"><b>⌂</b>홈</button><button data-page="rides"><b><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3v6.7M12 14.3V21M3 12h6.7M14.3 12H21M5.6 5.6l4.7 4.7M13.7 13.7l4.7 4.7M18.4 5.6l-4.7 4.7M10.3 13.7l-4.7 4.7"/></svg></b>라이딩</button><button data-page="runs"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5c2.8.2 5.2-.8 6.9-4.7l2.1 1 2.5 3.5 5.7 2.5c.8.4 1.2 1 1.2 1.8v2.2H3v-5.8Z"/><path d="M3 17.3v2h18.4v-2M12.1 8.2l-1.5 2.2M14.2 9.7l-1.5 2.1M16.3 10.7l-1.2 2"/></svg></b>러닝</button><button data-page="plans"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></b>일정</button><button data-page="settings"><b><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.45,11.07 21.45,12.93 19.37,14.24 18.79,15.63 19.34,18.03 18.03,19.34 15.63,18.79 14.24,19.37 12.93,21.45 11.07,21.45 9.76,19.37 8.37,18.79 5.97,19.34 4.66,18.03 5.21,15.63 4.63,14.24 2.55,12.93 2.55,11.07 4.63,9.76 5.21,8.37 4.66,5.97 5.97,4.66 8.37,5.21 9.76,4.63 11.07,2.55 12.93,2.55 14.24,4.63 15.63,5.21 18.03,4.66 19.34,5.97 18.79,8.37 19.37,9.76"/><circle cx="12" cy="12" r="3"/></svg></b>설정</button>
   </div></nav>
   <dialog id="detail"><button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button><h3 id="detail-title"></h3><p id="detail-text"></p><div class="detail-overview" id="detail-overview"></div><section class="activity-analysis" id="activity-analysis" hidden><div class="activity-metrics" id="activity-metrics"></div><p class="activity-insight" id="activity-insight"></p><div class="activity-note" id="activity-note" hidden></div><div class="activity-zone-charts" id="activity-zone-charts"></div><div class="stream-tabs" id="stream-tabs"></div><svg class="stream-chart" id="stream-chart" viewBox="0 0 300 136" role="img" aria-label="파워, 케이던스, 심박, 고도 통합 그래프"></svg></section><div class="dialog-actions"><button class="secondary" type="button" id="refresh-strava-detail" aria-label="Strava 원본 다시 불러오기" title="Strava 원본 다시 불러오기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5"/><path d="M18.2 15.5A7.5 7.5 0 1 1 19.7 9"/></svg></button><button class="secondary" type="button" id="edit-detail">수정</button><button type="button" id="close-detail">닫기</button></div></dialog>
   <dialog id="ride-search-dialog"><button class="dialog-close-x" type="button" data-dialog-close aria-label="팝업 닫기">×</button><form id="ride-search-form"><h3>기간으로 기록 찾기</h3><p>달력에서 시작일과 종료일을 차례로 선택하세요.</p><div class="calendar-head"><button type="button" id="calendar-prev" aria-label="이전 달">‹</button><div class="calendar-jump"><select id="calendar-year" aria-label="연도 선택"></select><select id="calendar-month" aria-label="월 선택"></select></div><button type="button" id="calendar-next" aria-label="다음 달">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="calendar-grid" id="calendar-grid"></div><div class="calendar-selection" id="calendar-selection">기간을 선택해 주세요</div><div class="calendar-shortcuts"><button type="button" id="calendar-today">오늘로 가기</button><button type="button" id="calendar-show-month">선택 월 보기</button><button type="button" id="calendar-show-year">선택 연도 보기</button></div><div class="dialog-actions"><button class="secondary" type="button" id="reset-ride-search">전체 보기</button><button class="secondary" type="button" id="cancel-ride-search">취소</button><button type="submit">기간 적용</button></div></form></dialog>
