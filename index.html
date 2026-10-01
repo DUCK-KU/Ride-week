@@ -427,6 +427,22 @@
     .workout-summary-item { padding-right:16px; }
     .workout-summary-item > span:not(.summary-symbol) { white-space:nowrap; }
     @media(max-width:420px) { .workout-summary { grid-template-columns:1fr; gap:7px; } .workout-summary-item { padding:12px 18px 12px 12px; gap:10px; font-size:12px; } .workout-summary-item b { font-size:14px; } .workout-summary .summary-symbol { width:28px; height:28px; } }
+    /* Keep sport cards aligned without shrinking their type on phones. */
+    .sport-profile-cards .player-snapshot-item,
+    .sport-profile-cards .running-pr { height:76px; min-height:76px; }
+    .sport-profile-cards .player-snapshot-item { padding:10px 8px; gap:6px; }
+    .sport-profile-cards .player-snapshot-copy { gap:6px; }
+    .sport-profile-cards .player-snapshot-copy b { font-size:14px; white-space:normal; overflow-wrap:anywhere; }
+    .sport-profile-cards .player-snapshot-copy > span { font-size:12px; white-space:normal; }
+    .sport-profile-cards .running-pr { gap:5px; padding:8px 4px; }
+    .sport-profile-cards .running-pr-label > span { font-size:12px; }
+    .sport-profile-cards .running-pr-label .pr-crown { width:13px; height:13px; }
+    .sport-profile-cards .running-pr b { font-size:14px; line-height:1.2; }
+    .sport-profile-cards .running-pr b small { font-size:12px; margin-top:4px; }
+    .ride-summary-toggle button, .scope-toggle button, .period button { font-size:13px; padding-top:9px; padding-bottom:9px; }
+    .ride-total { padding:14px 6px; }
+    .ride-total b { font-size:15px; white-space:normal; overflow:visible; word-break:keep-all; }
+    .ride-total span { font-size:12px; margin-top:6px; }
   </style>
 </head>
 <body>
