@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#6B808D">
+  <meta name="theme-color" content="#1828DD">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ride Week">
@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon.svg">
   <title>Ride Week</title>
   <style>
-    :root { color-scheme: light; --ink:#1d1d1f; --muted:#626d77; --paper:#f4f5f7; --green:#0a84ff; --deep:#6B808D; --text:#435864; --line:#e2e4e8; --soft:#eef0f3; --blue-soft:#e8f2ff; --success:#16845b; }
+    :root { color-scheme: light; --ink:#060607; --muted:#696A78; --paper:#eaeaea; --green:#1828DD; --deep:#1828DD; --text:#060607; --line:#dcdce1; --soft:#eaeaea; --blue-soft:#eef0ff; --white:#FDFEFF; --success:#16845b; }
     * { box-sizing:border-box; }
     html { scrollbar-gutter:stable; }
     body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
@@ -34,7 +34,7 @@
     .bar span { display:block; width:59%; height:100%; border-radius:inherit; background:#0a84ff; transition:width .25s ease; }
     .goal-note { margin:14px 0 0; color:#e1e3e7; font-size:14px; line-height:1.45; }
     .player-snapshot { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:14px; }
-    .player-snapshot-item { min-width:0; display:flex; align-items:center; gap:7px; padding:10px 8px; border:0; border-radius:18px; background:#fff; }
+    .player-snapshot-item { min-width:0; display:flex; align-items:center; gap:7px; padding:10px 8px; border:0; border-radius:18px; background:var(--white); }
     .player-snapshot-icon { width:27px; height:27px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); }
     .player-snapshot-icon svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .player-snapshot-copy { min-width:0; width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; }
@@ -43,7 +43,7 @@
     .player-snapshot-copy > span, .running-pr-label > span { display:block; margin:0; color:var(--muted); font-size:10px; line-height:1.2; white-space:nowrap; }
     .player-snapshot-copy > span { order:1; }
     h2 { margin:28px 0 12px; font-size:19px; letter-spacing:-.5px; }
-    .chart { padding:18px 12px 12px; border-radius:18px; background:white; }
+    .chart { padding:18px 12px 12px; border-radius:18px; background:var(--white); }
     .chart-head { display:flex; align-items:baseline; justify-content:space-between; margin:0 4px 12px; }
     .chart-head strong { font-size:16px; }
     .chart-head span { color:var(--muted); font-size:12px; }
@@ -57,10 +57,10 @@
     .axis-label { fill:#819087; font-size:8.5px; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif; }
     .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
     .training-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:8px; }
-    .training-metric { padding:13px 8px; border:0; border-radius:18px; background:#fff; text-align:center; }
+    .training-metric { padding:13px 8px; border:0; border-radius:18px; background:var(--white); text-align:center; }
     .training-metric strong { display:block; color:var(--text); font-size:20px; line-height:1.15; }
     .training-metric small { display:block; margin-top:5px; color:var(--muted); font-size:11px; }
-    .power-zones { margin-top:12px; padding:15px; border:0; border-radius:18px; background:#fff; }
+    .power-zones { margin-top:12px; padding:15px; border:0; border-radius:18px; background:var(--white); }
     .power-zones-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:12px; }
     .power-zones-head strong { color:var(--text); font-size:14px; }
     .power-zones-head span { color:var(--muted); font-size:11px; }
@@ -72,7 +72,7 @@
     .power-zone-legend span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .power-zone-legend time { color:var(--text); font-variant-numeric:tabular-nums; font-weight:700; text-align:right; }
     .power-zone-empty { margin:0; color:var(--muted); font-size:12px; line-height:1.5; }
-    .stat { min-width:0; padding:12px 4px; border-radius:18px; background:white; text-align:center; }
+    .stat { min-width:0; padding:12px 4px; border-radius:18px; background:var(--white); text-align:center; }
     .stat .icon { display:grid; height:19px; place-items:center; color:var(--green); }
     .stat .icon svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.9; }
     .stat strong { display:block; margin-top:5px; overflow:hidden; font-size:15px; letter-spacing:-.5px; white-space:nowrap; }
@@ -80,7 +80,7 @@
     .section-title { display:flex; align-items:center; justify-content:space-between; }
     .section-title button { border:0; background:transparent; color:var(--green); font-weight:700; }
     .rides { display:grid; gap:10px; }
-    .ride { width:100%; min-width:0; max-width:100%; display:flex; align-items:center; gap:13px; overflow:hidden; padding:13px; border:0; border-radius:18px; background:white; color:var(--ink); text-align:left; }
+    .ride { width:100%; min-width:0; max-width:100%; display:flex; align-items:center; gap:13px; overflow:hidden; padding:13px; border:0; border-radius:18px; background:var(--white); color:var(--ink); text-align:left; }
     .ride:active { transform:scale(.99); }
     .ride-icon { width:42px; height:42px; display:grid; place-items:center; flex:none; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
     .ride-copy { min-width:0; flex:1; }
@@ -121,7 +121,7 @@
     .activity-metric b { display:block; color:var(--text); font-size:14px; }
     .activity-metric span { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
     .activity-zone-charts { display:grid; gap:10px; margin:14px 0; }
-    .activity-zone-card { padding:12px; border:0; border-radius:18px; background:#fff; }
+    .activity-zone-card { padding:12px; border:0; border-radius:18px; background:var(--white); }
     .activity-zone-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
     .activity-zone-head strong { color:var(--text); font-size:12px; }
     .activity-zone-head small { color:var(--muted); font-size:10px; }
@@ -161,7 +161,7 @@
     .ride-summary-toggle { display:flex; gap:7px; margin:12px 0; }
     .ride-summary-toggle button { flex:1; padding:7px 8px; border:1px solid transparent; border-radius:999px; background:#edf2ee; color:var(--muted); font-size:11px; font-weight:750; transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
     .ride-summary-toggle button.active { border-color:var(--deep); background:var(--deep); color:#fff; }
-    .ride-total { min-width:0; padding:10px 4px; border-radius:18px; background:#fff; text-align:center; }
+    .ride-total { min-width:0; padding:10px 4px; border-radius:18px; background:var(--white); text-align:center; }
     .ride-total b { display:block; overflow:hidden; color:var(--text); font-size:13px; line-height:1.2; text-overflow:ellipsis; white-space:nowrap; }
     .ride-total span { display:block; margin-top:4px; color:var(--muted); font-size:9px; }
     .record-list .ride { position:relative; }
@@ -176,18 +176,18 @@
     .record-dialog { max-height:90vh; overflow:auto; }
     .record-dialog form { display:grid; gap:12px; }
     .record-dialog label { display:grid; gap:6px; color:#48564e; font-size:13px; font-weight:700; }
-    .record-dialog input, .record-dialog textarea, .record-dialog select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
+    .record-dialog input, .record-dialog textarea, .record-dialog select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:var(--white); color:var(--ink); font:inherit; }
     .record-dialog textarea { min-height:72px; resize:vertical; }
     .player-dialog form { display:grid; gap:12px; }
     .player-dialog { width:min(680px,calc(100% - 24px)); }
     .player-dialog label { display:grid; gap:6px; color:#48564e; font-size:13px; font-weight:700; }
-    .player-dialog input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; color:var(--ink); font:inherit; }
+    .player-dialog input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:var(--white); color:var(--ink); font:inherit; }
     .player-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .player-note { margin:0 0 2px; color:var(--muted); font-size:11px; }
     .player-update-date { margin:0; padding:8px 10px; border-radius:10px; background:var(--blue-soft); color:var(--text); font-size:10px; font-weight:700; }
     .player-tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:4px; border-radius:13px; background:#edf2ee; }
     .player-tabs button { padding:8px; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--muted); font-size:12px; transition:background .18s ease,color .18s ease,border-color .18s ease; }
-    .player-tabs button.active { background:#fff; color:var(--text); box-shadow:0 2px 8px #173c3114; }
+    .player-tabs button.active { background:var(--white); color:var(--text); box-shadow:0 2px 8px #173c3114; }
     .player-panel { display:grid; gap:10px; }
     .player-panel[hidden] { display:none; }
     .power-profile-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
@@ -215,7 +215,7 @@
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .picker-label { margin-top:2px; color:#48564e; font-size:13px; font-weight:700; }
     .icon-picker { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-    .icon-choice { display:grid; place-items:center; min-height:48px; border:1px solid var(--line); border-radius:12px; background:white; color:#63736a; }
+    .icon-choice { display:grid; place-items:center; min-height:48px; border:1px solid var(--line); border-radius:12px; background:var(--white); color:#63736a; }
     .icon-choice.selected { border-color:var(--green); background:#e5f6ed; color:var(--green); }
     .icon-choice svg, .ride-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.75; }
     .icon-choice svg.symbol-bike, .ride-icon svg.symbol-bike { stroke-width:2.35; }
@@ -233,10 +233,10 @@
     .calendar-head { display:grid; grid-template-columns:40px 1fr 40px; align-items:center; margin:8px 0; }
     .calendar-head button { padding:8px; border-radius:10px; background:#edf2ee; color:var(--text); }
     .calendar-jump { display:flex; justify-content:center; gap:6px; }
-    .calendar-jump select { width:auto; padding:7px 22px 7px 8px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--text); font:inherit; font-size:12px; font-weight:750; }
+    .calendar-jump select { width:auto; padding:7px 22px 7px 8px; border:1px solid var(--line); border-radius:9px; background:var(--white); color:var(--text); font:inherit; font-size:12px; font-weight:750; }
     .calendar-weekdays, .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
     .calendar-weekdays span { padding:5px 0; color:var(--muted); font-size:10px; text-align:center; }
-    .plan-calendar { margin-top:14px; padding:11px 12px 12px; border-radius:20px; background:#fff; }
+    .plan-calendar { margin-top:14px; padding:11px 12px 12px; border-radius:20px; background:var(--white); }
     .plan-calendar .calendar-head { grid-template-columns:32px 1fr 40px 32px; margin:0 0 5px; }
     .plan-calendar .calendar-head button { display:grid; width:32px; height:32px; place-items:center; padding:0; border:0; background:transparent; color:var(--text); }
     .plan-calendar .calendar-head #plan-today { width:40px; color:#0a84ff; font-size:11px; font-weight:800; }
@@ -263,7 +263,7 @@
     .plan-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:20px 0 12px; }
     .plan-list-head h2 { margin:0; }
     .plan-list { display:grid; gap:10px; }
-    .plan-card { padding:15px; border-radius:18px; background:#fff; }
+    .plan-card { padding:15px; border-radius:18px; background:var(--white); }
     .plan-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
     .plan-card-head strong { color:var(--text); font-size:14px; }
     .plan-card-sport-dot { display:inline-block; width:9px; height:9px; margin-right:6px; border:2px solid #0a84ff; border-radius:50%; vertical-align:1px; }
@@ -274,7 +274,7 @@
     .plan-card-actions button[data-plan-end] { color:var(--muted); }
     .plan-card-meta { margin:5px 0 0; color:var(--muted); font-size:11px; }
     .plan-card-note { margin:12px 0 0; color:var(--ink); font-size:13px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
-    .plan-empty { padding:25px 16px; border-radius:18px; background:#fff; color:var(--muted); font-size:13px; text-align:center; }
+    .plan-empty { padding:25px 16px; border-radius:18px; background:var(--white); color:var(--muted); font-size:13px; text-align:center; }
     #plan-form textarea { min-height:110px; overflow:hidden; resize:none; line-height:1.55; }
     .calendar-day { aspect-ratio:1; padding:0; border:0; border-radius:50%; background:transparent; color:var(--ink); font-size:12px; }
     .calendar-day.outside { color:#bdc5c0; }
@@ -282,7 +282,7 @@
     .calendar-day.selected { border-radius:50%; background:var(--deep); color:#fff; font-weight:800; }
     .calendar-selection { min-height:34px; margin:9px 0 3px; padding:9px 10px; border-radius:10px; background:#f0f5f1; color:#456158; font-size:11px; text-align:center; }
     .calendar-shortcuts { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:8px 0; }
-    .calendar-shortcuts button { padding:8px 5px; border:1px solid var(--line); border-radius:999px; background:#fff; color:#456158; font-size:10px; font-weight:750; }
+    .calendar-shortcuts button { padding:8px 5px; border:1px solid var(--line); border-radius:999px; background:var(--white); color:#456158; font-size:10px; font-weight:750; }
     .empty { margin-top:28px; color:var(--muted); text-align:center; line-height:1.6; }
     @media (hover:hover) {
       .period button:hover, .scope-toggle button:hover, .ride-summary-toggle button:hover, .legend button:hover, .player-tabs button:hover, .calendar-shortcuts button:hover { background:#dfeae3; color:var(--text); transform:translateY(-1px); }
@@ -290,14 +290,14 @@
       .add-button:hover, .find-button:hover, dialog button:hover { filter:brightness(.96); }
     }
     .goal-settings { display:grid; gap:11px; margin-top:12px; }
-    .goal-setting { display:flex; width:100%; align-items:center; gap:13px; padding:16px; border:0; border-radius:18px; background:white; color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
+    .goal-setting { display:flex; width:100%; align-items:center; gap:13px; padding:16px; border:0; border-radius:18px; background:var(--white); color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
     .goal-setting .goal-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:18px; }
     .goal-setting .goal-icon svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.9; }
     .goal-setting strong { display:block; font-size:15px; }
     .goal-setting span { display:block; margin-top:3px; color:var(--muted); font-size:13px; }
     .goal-setting b { margin-left:auto; font-size:18px; }
     .settings-actions { display:grid; gap:11px; margin-top:24px; }
-    .settings-action { width:100%; display:flex; align-items:center; gap:13px; padding:16px; border:0; border-radius:18px; background:white; color:var(--ink); text-align:left; }
+    .settings-action { width:100%; display:flex; align-items:center; gap:13px; padding:16px; border:0; border-radius:18px; background:var(--white); color:var(--ink); text-align:left; }
     .settings-action .action-icon { display:grid; width:42px; height:42px; place-items:center; border-radius:50%; background:#e5f6ed; color:var(--green); font-size:19px; }
     .settings-action strong { display:block; font-size:15px; }
     .settings-action span { display:block; margin-top:3px; color:var(--muted); font-size:12px; }
@@ -335,7 +335,7 @@
     .player-snapshot { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
     .player-snapshot-item { min-height:45px; }
     .running-prs { display:grid; grid-template-columns:1fr; gap:7px; margin:0; }
-    .running-pr { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px; border-radius:18px; background:#fff; color:var(--text); }
+    .running-pr { min-height:38px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px; border-radius:18px; background:var(--white); color:var(--text); }
     .running-pr-label { min-width:0; flex:0 0 auto; display:flex; align-items:center; gap:6px; }
     .running-pr-label .pr-crown { width:14px; height:14px; }
     .running-pr b { display:block; flex:none; overflow:visible; font-size:12px; line-height:1.2; white-space:nowrap; }
@@ -395,11 +395,11 @@
       .ride-meta { font-size:11px; }
     }
     .workout-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-    .workout-summary-item { display:flex; align-items:center; gap:7px; min-width:0; padding:13px 10px; border-radius:18px; background:#fff; font-size:11px; color:var(--muted); }
+    .workout-summary-item { display:flex; align-items:center; gap:7px; min-width:0; padding:13px 10px; border-radius:18px; background:var(--white); font-size:11px; color:var(--muted); }
     .workout-summary-item b { margin-left:auto; color:var(--ink); font-size:14px; white-space:nowrap; }
     .summary-symbol { display:grid; place-items:center; width:30px; height:30px; flex:none; border-radius:50%; background:var(--blue-soft); color:var(--green); }
     .summary-symbol svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-    .dashboard-link { display:flex; align-items:center; gap:12px; width:100%; padding:15px; background:#fff; color:var(--ink); border:0; border-radius:18px; text-align:left; }
+    .dashboard-link { display:flex; align-items:center; gap:12px; width:100%; padding:15px; background:var(--white); color:var(--ink); border:0; border-radius:18px; text-align:left; }
     .dashboard-link-copy { flex:1; min-width:0; font-size:13px; }
     .dashboard-link-copy small { display:block; margin-top:5px; color:var(--muted); font-size:11px; }
     .dashboard-link > svg { width:17px; height:17px; fill:none; stroke:var(--muted); stroke-width:1.8; flex:none; transition:transform .2s; }
@@ -449,6 +449,22 @@
     .ride-week-summary > span { display:block; white-space:nowrap; }
     .sport-profile-cards .player-snapshot-copy { align-items:flex-end; text-align:right; }
     .sport-profile-cards .player-snapshot-copy b { text-align:right; }
+    /* Surface colors stay neutral; data visualization palettes remain unchanged. */
+    .goal { background:var(--blue-soft); color:var(--ink); }
+    .goal-label { color:var(--muted); }
+    .bar { background:#d9ddf5; }
+    .bar span { background:var(--green); }
+    .strava-card { background:var(--white); color:var(--ink); }
+    .strava-card p { color:var(--muted); }
+    .strava-key button, .strava-buttons button { background:var(--green); }
+    .strava-buttons .secondary { background:var(--soft); color:var(--text); }
+    .strava-key input { color:var(--ink); background:var(--soft); }
+    .ride-type, .record-dialog label, .player-dialog label, .picker-label { color:var(--muted); }
+    .detail-overview div, .activity-metric, .activity-note, .splits-card { background:var(--soft); }
+    .chart-tooltip, .activity-insight { background:var(--blue-soft); color:var(--green) !important; }
+    .profile-apply { border-color:#b7bef5; background:var(--blue-soft); color:var(--green); }
+    .plan-calendar .calendar-head #plan-today { color:var(--green); }
+    dialog::backdrop { background:#06060766; }
   </style>
 </head>
 <body>
