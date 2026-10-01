@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon.svg">
   <title>Ride Week</title>
   <style>
-    :root { color-scheme: light; --ink:#1A1A1A; --muted:#7E838C; --paper:#E6E7EB; --green:#0D3380; --deep:#0D3380; --text:#1A1A1A; --line:#B8BECC; --soft:#D3DBEB; --blue-soft:#D3DBEB; --white:#F0F2F5; --success:#0D3380; --sand:#B3987D; }
+    :root { color-scheme: light; --ink:#1A1A1A; --muted:#1A1A1A; --paper:#E6E7EB; --green:#0D3380; --deep:#0D3380; --text:#1A1A1A; --line:#B8BECC; --soft:#D3DBEB; --blue-soft:#D3DBEB; --white:#F0F2F5; --success:#0D3380; --sand:#B3987D; }
     * { box-sizing:border-box; }
     html { scrollbar-gutter:stable; }
     body { margin:0; overflow-x:hidden; overflow-y:scroll; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; }
@@ -498,6 +498,38 @@
     .strava-card p { color:#F0F2F5; }
     #sync-strava-new { background:#E6E7EB; color:#1A1A1A; }
     .strava-key input:disabled { color:#1A1A1A; }
+    /* Unified interface roles. Data-series and zone palettes are intentionally excluded. */
+    :root { --surface:#F0F2F5; --inset:#E6E7EB; --control:#D3DBEB; --accent:#0D3380; --accent-text:#F0F2F5; --point:#B3987D; }
+    .goal, .chart, .stat, .training-metric, .workout-summary-item, .player-snapshot-item, .running-pr,
+    .ride, .plan-calendar, .plan-card, .dashboard-link, .goal-setting, .settings-action,
+    .coach-share-card, .strava-card, dialog, .bottom { background:var(--surface); color:var(--text); }
+    .coach-share-card { border:0; }
+    .goal-label, .strava-card p, .strava-status, .strava-key input:disabled { color:var(--text) !important; }
+    .detail-overview div, .activity-metric, .activity-note, .splits-card, .power-zones, .activity-zone-card { background:var(--inset); color:var(--text); }
+    .period button:not(.active), .scope-toggle button:not(.active), .ride-summary-toggle button:not(.active),
+    .sport-switch button:not(.active), .find-button, .dialog-actions .secondary,
+    .strava-buttons .secondary, .plan-card-actions button, .calendar-shortcuts button,
+    .calendar-head button, .player-tabs { background:var(--control); color:var(--text); }
+    .period button.active, .scope-toggle button.active, .ride-summary-toggle button.active,
+    .sport-switch button.active, .add-button, .coach-share-button,
+    .strava-key button, .strava-key .key-lock, .strava-buttons button:not(.secondary),
+    #sync-strava-new, #stop-strava-sync { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+    dialog .dialog-actions button:not(.secondary) { background:var(--accent); color:var(--accent-text); }
+    .sport-switch { background:var(--control); }
+    .player-tabs button.active { background:var(--accent); color:var(--accent-text); }
+    .strava-key input, .record-dialog input, .record-dialog textarea, .record-dialog select,
+    .player-dialog input { background:var(--inset); color:var(--text); border-color:var(--line); }
+    .strava-key input::placeholder { color:var(--text); }
+    .avatar, .player-snapshot-icon, .ride-icon, .summary-symbol,
+    .goal-setting .goal-icon, .settings-action .action-icon { background:var(--control); color:var(--accent); }
+    .goal .bar { background:var(--line); }
+    .goal .bar span { background:var(--point); }
+    .pr-crown { stroke:var(--point); }
+    .profile-apply, .profile-apply:hover { background:var(--control); color:var(--accent); border-color:var(--accent); }
+    .plan-card-head strong, .coach-share-card p, .ride-type { color:var(--text); }
+    .nav button { color:var(--text); }
+    .nav button.active { color:var(--accent); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
   </style>
 </head>
 <body>
