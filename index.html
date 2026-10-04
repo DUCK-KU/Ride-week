@@ -996,9 +996,43 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
       }catch(error){console.warn('일정 동기화:',error.message);}
       finally{plansSyncing=false;if(plansSyncPending){plansSyncPending=false;syncCloudPlans();}}
     }
-    let settingsSyncing=false;
-    async function uploadCloudSettings(){const response=await fetch(`${stravaWorkerUrl}/api/settings`,{method:'PUT',headers:{'content-type':'application/json','x-ride-week-key':stravaSyncKey},body:JSON.stringify({settings:settingsPayload()})});const data=await response.json();if(!response.ok)throw new Error(data.error||'설정을 저장하지 못했습니다.');localStorage.setItem(settingsUpdatedStorageKey,String(Date.parse(data.updatedAt)||Date.now()));return data;}
-    async function syncCloudSettings(){if(!stravaSyncKey||settingsSyncing)return;settingsSyncing=true;try{const response=await fetch(`${stravaWorkerUrl}/api/settings`,{headers:{'x-ride-week-key':stravaSyncKey}});const data=await response.json();if(!response.ok)throw new Error(data.error||'설정을 불러오지 못했습니다.');const localUpdated=Number(localStorage.getItem(settingsUpdatedStorageKey))||0;const remoteUpdated=Date.parse(data.updatedAt)||0;if(!data.settings||localUpdated>remoteUpdated){await uploadCloudSettings();return;}if(remoteUpdated>=localUpdated){goals={...goals,...data.settings.goals};playerData={...playerData,...data.settings.playerData,powerProfile:{...(playerData.powerProfile||{}),...(data.settings.playerData?.powerProfile||{})},powerProfileAuto:{...(playerData.powerProfileAuto||{}),...(data.settings.playerData?.powerProfileAuto||{})},powerProfileSources:{...(playerData.powerProfileSources||{}),...(data.settings.playerData?.powerProfileSources||{})}};ftp=Number(playerData.ftp)||201;playerData.ftpHistory=normalizedFtpHistory(playerData.ftpHistory,ftp);playerData.profileHistory=normalizedProfileHistory(playerData.profileHistory,playerData);localStorage.setItem(goalsStorageKey,JSON.stringify(goals));localStorage.setItem(playerDataStorageKey,JSON.stringify(playerData));localStorage.setItem(ftpStorageKey,String(ftp));localStorage.setItem(settingsUpdatedStorageKey,String(remoteUpdated));save();}}catch(error){console.warn('설정 동기화:',error.message);}finally{settingsSyncing=false;}}
+    let settingsSyncing=false,settingsSyncPending=false;
+    async function uploadCloudSettings(){
+      const sentVersion=Number(localStorage.getItem(settingsUpdatedStorageKey))||0;
+      const response=await fetch(`${stravaWorkerUrl}/api/settings`,{method:'PUT',headers:{'content-type':'application/json','x-ride-week-key':stravaSyncKey},body:JSON.stringify({settings:settingsPayload()})});
+      const data=await response.json();
+      if(!response.ok)throw new Error(data.error||'설정을 저장하지 못했습니다.');
+      if((Number(localStorage.getItem(settingsUpdatedStorageKey))||0)===sentVersion)localStorage.setItem(settingsUpdatedStorageKey,String(Date.parse(data.updatedAt)||Date.now()));
+      else settingsSyncPending=true;
+      return data;
+    }
+    async function syncCloudSettings(){
+      if(!stravaSyncKey)return;
+      if(settingsSyncing){settingsSyncPending=true;return;}
+      settingsSyncing=true;
+      try{
+        const response=await fetch(`${stravaWorkerUrl}/api/settings`,{headers:{'x-ride-week-key':stravaSyncKey},cache:'no-store'});
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error||'설정을 불러오지 못했습니다.');
+        const localUpdated=Number(localStorage.getItem(settingsUpdatedStorageKey))||0;
+        const remoteUpdated=Date.parse(data.updatedAt)||0;
+        if(!data.settings||localUpdated>remoteUpdated){await uploadCloudSettings();return;}
+        if(remoteUpdated<=localUpdated)return;
+        // Never replace an in-progress profile or goal edit with another device's values.
+        if(document.querySelector('dialog[open]'))return;
+        goals={...goals,...data.settings.goals};
+        playerData={...playerData,...data.settings.playerData,powerProfile:{...(playerData.powerProfile||{}),...(data.settings.playerData?.powerProfile||{})},powerProfileAuto:{...(playerData.powerProfileAuto||{}),...(data.settings.playerData?.powerProfileAuto||{})},powerProfileSources:{...(playerData.powerProfileSources||{}),...(data.settings.playerData?.powerProfileSources||{})}};
+        ftp=Number(playerData.ftp)||201;
+        playerData.ftpHistory=normalizedFtpHistory(playerData.ftpHistory,ftp);
+        playerData.profileHistory=normalizedProfileHistory(playerData.profileHistory,playerData);
+        localStorage.setItem(goalsStorageKey,JSON.stringify(goals));
+        localStorage.setItem(playerDataStorageKey,JSON.stringify(playerData));
+        localStorage.setItem(ftpStorageKey,String(ftp));
+        localStorage.setItem(settingsUpdatedStorageKey,String(remoteUpdated));
+        save();
+      }catch(error){console.warn('설정 동기화:',error.message);}
+      finally{settingsSyncing=false;if(settingsSyncPending){settingsSyncPending=false;syncCloudSettings();}}
+    }
     function setStravaStatus(message){document.querySelector('#strava-status').textContent=message;}
     const powerAnalysisVersion=6;
     const needsCyclingAnalysis=record=>{if(!record?.stravaId||isRun(record)||record.stravaDetailVersion!==powerAnalysisVersion)return Boolean(record?.stravaId)&&!isRun(record);const savedFtp=Number(record.ftpWatts??record.powerMetrics?.ftp);const effectiveFtp=Number(ftpForDate(record.date));return savedFtp>0&&effectiveFtp>0&&savedFtp!==effectiveFtp;};
@@ -1130,9 +1164,10 @@ function aggregateAutomaticPowerProfile(){const cutoff=calendarKey(addDays(today
     if(new URLSearchParams(location.search).get('strava')==='connected'){setStravaStatus('Strava 연결이 완료됐어요. 기록 동기화를 눌러 주세요.');history.replaceState({},'',location.pathname);}
     else if(stravaSyncKey)setStravaStatus('동기화 키가 이 기기에 저장되어 있어요.');
     if(stravaSyncKey){syncCloudSettings();syncCloudPlans();}
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&stravaSyncKey)syncCloudPlans();});
-    window.addEventListener('focus',()=>{if(stravaSyncKey)syncCloudPlans();});
-    setInterval(()=>{if(!document.hidden&&stravaSyncKey)syncCloudPlans();},15000);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&stravaSyncKey){syncCloudPlans();syncCloudSettings();}});
+    window.addEventListener('focus',()=>{if(stravaSyncKey){syncCloudPlans();syncCloudSettings();}});
+    setInterval(()=>{if(!document.hidden&&stravaSyncKey){syncCloudPlans();syncCloudSettings();}},15000);
+    document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',()=>syncCloudSettings()));
     const lastAutomaticSync=Number(localStorage.getItem(stravaLastSyncStorageKey))||0;const lastAutomaticAttempt=Number(localStorage.getItem(stravaLastAttemptStorageKey))||0;const lastAutomaticActivity=Math.max(lastAutomaticSync,lastAutomaticAttempt);if(stravaSyncKey&&Date.now()-lastAutomaticActivity>6*60*60*1000)setTimeout(()=>syncStrava({automatic:true}),1200);
     let homeSport='ride';
     const homeItems=()=>homeSport==='run'?runningRecords():cyclingRecords();
