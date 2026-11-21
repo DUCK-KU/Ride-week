@@ -99,6 +99,49 @@ const compact = values => {
   return values.filter((_, index) => index % step === 0).map(value => Number(value) || 0);
 };
 
+// Work from Strava's aligned streams before compact() drops timestamps and nulls.
+function coachTimeSeries(streams) {
+  const times = streams.time?.data;
+  const fields = ['watts', 'heartrate', 'cadence'];
+  if (!Array.isArray(times) || !times.length) return {status: 'missing_time', samples: []};
+  const aligned = key => {
+    const values = streams[key]?.data;
+    return Array.isArray(values) && values.length === times.length ? values : [];
+  };
+  const sensors = fields.map(aligned);
+  const moving = aligned('moving');
+  const bins = new Map();
+  const peaks = [null, null, null];
+  let previous = -1;
+  for (let i = 0; i < times.length; i++) {
+    const t = times[i];
+    if (!Number.isFinite(t) || t < 0 || t <= previous) return {status: 'invalid_time', samples: []};
+    previous = t;
+    const start = Math.floor(t / 30) * 30;
+    if (!bins.has(start)) bins.set(start, {sum:[0,0,0], count:[0,0,0], paused:0, unknown:0});
+    const bin = bins.get(start);
+    if (moving[i] === false) { bin.paused++; continue; }
+    if (moving[i] !== true) bin.unknown++;
+    sensors.forEach((values, j) => {
+      const v = values[i];
+      if (Number.isFinite(v) && v >= 0 && (j !== 1 || v > 0)) {
+        bin.sum[j] += v;
+        bin.count[j]++;
+        peaks[j] = Math.max(peaks[j] ?? v, v);
+      }
+    });
+  }
+  let measured = false;
+  const samples = Array.from(bins, ([elapsedSeconds, bin]) => {
+    const means = bin.sum.map((s,j) => bin.count[j] ? Math.round(10*s/bin.count[j])/10 : null);
+    if (bin.count.some(Boolean)) measured = true;
+    return {elapsedSeconds, powerWatts:means[0], heartRateBpm:means[1], cadenceRpm:means[2],
+      sampleCounts:bin.count, pausedSamples:bin.paused, unknownMovementSamples:bin.unknown};
+  });
+  return {status:measured ? 'available' : 'no_sensor_measurements', lastObservedSecond:previous,
+    observedMax:{powerWatts:peaks[0], heartRateBpm:peaks[1], cadenceRpm:peaks[2]}, samples};
+}
+
 function toActivityDetail(activity, streams) {
   return {
     activity: {
@@ -207,6 +250,11 @@ export default {
         const token = await refreshTokenIfNeeded(env);
         if (!token) return json({ error: 'Strava 계정을 먼저 연결해 주세요.' }, 409, origin);
         const headers = { authorization: `Bearer ${token.access_token}` };
+        if (url.searchParams.get('view') === 'coach-series') {
+          const response = await fetch(stravaStreamsUrl(id), {headers});
+          if (!response.ok) return json({status:'streams_unavailable', samples:[]}, response.status, origin);
+          return json(coachTimeSeries(await response.json()), 200, origin);
+        }
         const [activityResponse, streamsResponse] = await Promise.all([
           fetch(stravaActivityUrl(id), { headers }),
           fetch(stravaStreamsUrl(id), { headers }),
